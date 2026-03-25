@@ -2,6 +2,21 @@
 
 ## Product Requirements Document
 
+### Design Decisions (Resolved)
+
+| # | Decision | Resolution | Rationale |
+|---|----------|------------|-----------|
+| 1 | Question bank | 151 questions exist in `src/data/questions.ts`. Short task statement codes (e.g., "3.1") are acceptable — not displayed in UI. | Data layer is complete; no generation needed. |
+| 2 | State management | React context only (no localStorage). | Keeps it simple. If a database is added later, context still handles client-side UI state while the DB handles persistence — no rework needed. |
+| 3 | Scenario selection | Draw from all 6 scenarios per exam. | Practice tool prioritizes content coverage over exam simulation fidelity. |
+| 4 | Timer | None. `timeSpent` removed from types. | Learning tool — immediate feedback matters more than time pressure. |
+| 5 | Exam history | Fire-and-forget. No localStorage persistence of past sessions. | Database is the right persistence layer if history is added later. |
+| 6 | "Review All Questions" | Reuses `/exam` route with a `reviewMode` flag in context. All questions shown in answered state. | No new route or duplicate UI needed. |
+| 7 | Dark mode | Supported via `prefers-color-scheme`. No manual toggle. | Tailwind v4 dark variants are near-zero effort. |
+| 8 | Answer shuffling | Shuffled copies stored directly in context. Source data in `questions.ts` never mutated. | Every component reads `question.correctAnswer` directly — no mapping lookups. |
+| 9 | Types location | Shared types in `src/lib/types.ts`. Data file imports from there. | Separates app types (`ExamSession`, `UserAnswer`) from the question data file. |
+| 10 | Build order | Types/constants -> Exam logic -> Context provider -> Home -> Exam -> Results -> Polish | Data and logic validated before touching UI. |
+
 ---
 
 ## 1. Overview
@@ -68,12 +83,12 @@ type ScenarioId = 1 | 2 | 3 | 4 | 5 | 6;
 type AnswerLabel = "A" | "B" | "C" | "D";
 
 // Individual question in the bank
+// Note: domainName and scenarioName are looked up from DOMAIN_NAMES/SCENARIO_NAMES,
+// not stored per-question (see src/data/questions.ts)
 interface Question {
   id: number;
   domain: DomainId;
-  domainName: string;
   scenario: ScenarioId;
-  scenarioName: string;
   taskStatement: string; // e.g. "1.1", "2.3", "4.5"
   question: string;
   options: { label: AnswerLabel; text: string }[];
@@ -102,7 +117,6 @@ interface UserAnswer {
   questionId: number;
   selectedAnswer: AnswerLabel | null;
   isCorrect: boolean;
-  timeSpent?: number; // optional, in seconds
 }
 
 // Results for a single domain
@@ -115,14 +129,13 @@ interface DomainResult {
   percentage: number;
 }
 
-// Complete exam session
+// Complete exam session (held in React context, fire-and-forget)
 interface ExamSession {
-  id: string;
-  startedAt: Date;
-  completedAt?: Date;
   questionCount: number;
-  questions: Question[];
+  questions: Question[]; // shuffled copies with remapped correctAnswer
   answers: UserAnswer[];
+  currentQuestionIndex: number;
+  reviewMode: boolean; // true when navigating back from results via "Review All Questions"
   domainResults: DomainResult[];
   rawScore: number; // percentage correct (0-100)
   scaledScore: number; // 100-1000
@@ -229,7 +242,7 @@ const SCENARIOS: ScenarioInfo[] = [
 - **Raw stats:** X of Y correct (percentage)
 - **Domain breakdown:** 5 rows/bars showing each domain's score. Each row: domain name, questions correct/total, percentage, visual bar. Color-coded (green if >=72%, yellow if 50-71%, red if <50%)
 - **Missed questions review:** Expandable list of every incorrectly answered question. Each shows: scenario name, question text, your answer (in red), correct answer (in green), explanation.
-- **Action buttons:** "Retake Exam" (returns to home), "Review All Questions" (shows all questions with answers)
+- **Action buttons:** "Retake Exam" (returns to home), "Review All Questions" (sets `reviewMode: true` in context and navigates to `/exam` — reuses exam page in read-only state with all questions in their answered state)
 
 ---
 
@@ -346,7 +359,8 @@ domainPercentage = (domainCorrect / domainTotal) * 100
 ## 8. UI/UX Requirements
 
 ### Visual Design
-- Clean, professional appearance matching Anthropic's aesthetic (light background, minimal decoration)
+- Clean, professional appearance matching Anthropic's aesthetic
+- Dark mode supported via `prefers-color-scheme` (no manual toggle)
 - Primary color: dark/charcoal for text, green for correct/pass, red for incorrect/fail
 - Card-based layout for questions and answer options
 - Smooth transitions for explanation panel reveal
@@ -425,9 +439,10 @@ Each scenario below is an independently verifiable user flow for Ranger browser 
 - **Framework:** Next.js 16 (App Router)
 - **UI:** React 19 + Tailwind CSS v4
 - **Language:** TypeScript (strict mode)
-- **State Management:** React useState/useReducer (client components)
-- **Data:** Static TypeScript file (`src/data/questions.ts`) - no database
-- **Routing:** Next.js App Router (`/`, `/exam`, `/exam/results`)
+- **State Management:** React context (ExamContext provider at layout level). No localStorage.
+- **Data:** Static TypeScript file (`src/data/questions.ts`) - no database. 151 questions.
+- **Types:** Shared types in `src/lib/types.ts`, exam logic in `src/lib/exam.ts`
+- **Routing:** Next.js App Router (`/`, `/exam`, `/exam/results`). `/exam` doubles as review mode via context flag.
 - **Path aliases:** `@/*` mapped to `./src/*`
 
 ---
@@ -442,3 +457,39 @@ Each scenario below is an independently verifiable user flow for Ranger browser 
 - **Plausible distractors** - incorrect options represent choices a candidate with incomplete knowledge might make
 - **Detailed explanations** - every question includes an explanation that teaches the concept, not just states the answer
 - **Sources:** Adapted from exam guide samples, Anthropic Academy course quizzes, Architect's Playbook patterns, and original questions derived from the 30 task statements
+
+---
+
+## 12. File Structure
+
+```
+src/
+├── lib/
+│   ├── types.ts          # Shared types (ExamSession, UserAnswer, DomainResult, etc.)
+│   ├── constants.ts      # DOMAINS, SCENARIOS arrays
+│   └── exam.ts           # generateExam(), shuffleOptions(), calculateScore()
+├── data/
+│   └── questions.ts      # 151 questions (existing)
+├── context/
+│   └── ExamContext.tsx    # React context provider + useExam hook
+└── app/
+    ├── layout.tsx         # Root layout wrapping ExamContext provider
+    ├── page.tsx           # Home page
+    ├── exam/
+    │   ├── page.tsx       # Exam page (also serves review mode)
+    │   └── results/
+    │       └── page.tsx   # Results page
+    └── globals.css
+```
+
+---
+
+## 13. Build Order
+
+1. **Types + constants** — `src/lib/types.ts`, `src/lib/constants.ts`
+2. **Exam logic** — `src/lib/exam.ts` (question selection, answer shuffling, scoring)
+3. **Context provider** — `src/context/ExamContext.tsx`
+4. **Home page** — Domain cards, question count selector, start button
+5. **Exam page** — Question display, answer selection, feedback, nav dots
+6. **Results page** — Score hero, domain breakdown, missed questions, action buttons
+7. **Polish** — Keyboard navigation, animations, responsive tweaks, dark mode

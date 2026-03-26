@@ -11,7 +11,7 @@ import {
 import type { Question, AnswerLabel, ExamSession, UserAnswer } from "@/lib/types";
 import { questions as allQuestions } from "@/data/questions";
 import { generateExam, calculateScore } from "@/lib/exam";
-import { SCENARIOS } from "@/lib/constants";
+import { SCENARIOS, EXAM_TIME_LIMITS } from "@/lib/constants";
 
 interface ExamContextValue {
   session: ExamSession | null;
@@ -22,6 +22,7 @@ interface ExamContextValue {
   nextQuestion: () => void;
   enterReviewMode: () => void;
   resetExam: () => void;
+  timeUp: () => void;
   currentQuestion: Question | null;
   currentAnswer: UserAnswer | null;
   scenarioDescription: string;
@@ -30,11 +31,17 @@ interface ExamContextValue {
 
 const ExamContext = createContext<ExamContextValue | null>(null);
 
+function finalizeSession(prev: ExamSession, answers: UserAnswer[]): ExamSession {
+  const { rawScore, scaledScore, passed, domainResults } = calculateScore(prev.questions, answers);
+  return { ...prev, answers, rawScore, scaledScore, passed, domainResults };
+}
+
 export function ExamProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<ExamSession | null>(null);
 
   const startExam = useCallback((questionCount: number) => {
     const questions = generateExam(questionCount, allQuestions);
+    const timeLimitMs = EXAM_TIME_LIMITS[questionCount] ?? null;
     setSession({
       questions,
       answers: [],
@@ -44,6 +51,8 @@ export function ExamProvider({ children }: { children: ReactNode }) {
       rawScore: 0,
       scaledScore: 0,
       passed: false,
+      timeLimitMs,
+      startedAt: timeLimitMs ? Date.now() : null,
     });
   }, []);
 
@@ -61,13 +70,8 @@ export function ExamProvider({ children }: { children: ReactNode }) {
       };
       const newAnswers = [...prev.answers, newAnswer];
 
-      // Calculate scores eagerly when last answer is submitted
       if (newAnswers.length === prev.questions.length) {
-        const { rawScore, scaledScore, passed, domainResults } = calculateScore(
-          prev.questions,
-          newAnswers
-        );
-        return { ...prev, answers: newAnswers, rawScore, scaledScore, passed, domainResults };
+        return finalizeSession(prev, newAnswers);
       }
 
       return { ...prev, answers: newAnswers };
@@ -89,6 +93,23 @@ export function ExamProvider({ children }: { children: ReactNode }) {
         return { ...prev, currentQuestionIndex: prev.currentQuestionIndex + 1 };
       }
       return prev;
+    });
+  }, []);
+
+  const timeUp = useCallback(() => {
+    setSession((prev) => {
+      if (!prev || prev.reviewMode) return prev;
+      if (prev.answers.length === prev.questions.length) {
+        return finalizeSession(prev, prev.answers);
+      }
+      const answeredIds = new Set(prev.answers.map((a) => a.questionId));
+      const filledAnswers: UserAnswer[] = [...prev.answers];
+      for (const q of prev.questions) {
+        if (!answeredIds.has(q.id)) {
+          filledAnswers.push({ questionId: q.id, selectedAnswer: null, isCorrect: false });
+        }
+      }
+      return finalizeSession(prev, filledAnswers);
     });
   }, []);
 
@@ -135,12 +156,13 @@ export function ExamProvider({ children }: { children: ReactNode }) {
       nextQuestion,
       enterReviewMode,
       resetExam,
+      timeUp,
       currentQuestion,
       currentAnswer,
       scenarioDescription,
       isLastQuestion,
     }),
-    [session, answerMap, startExam, answerQuestion, goToQuestion, nextQuestion, enterReviewMode, resetExam, currentQuestion, currentAnswer, scenarioDescription, isLastQuestion]
+    [session, answerMap, startExam, answerQuestion, goToQuestion, nextQuestion, enterReviewMode, resetExam, timeUp, currentQuestion, currentAnswer, scenarioDescription, isLastQuestion]
   );
 
   return (

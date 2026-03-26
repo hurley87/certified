@@ -40,4 +40,6 @@ export interface ExamSession {
   rawScore: number;
   scaledScore: number;
   passed: boolean;
+  timeLimitMs: number | null;
+  startedAt: number | null;
 }

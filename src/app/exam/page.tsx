@@ -1,9 +1,20 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useExam } from "@/context/ExamContext";
 import { SCENARIO_NAMES } from "@/data/questions";
+
+function formatTime(ms: number): string {
+  if (ms <= 0) return "0:00";
+  const totalSeconds = Math.ceil(ms / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  if (hours > 0) return `${hours}:${pad(minutes)}:${pad(seconds)}`;
+  return `${minutes}:${pad(seconds)}`;
+}
 
 export default function ExamPage() {
   const router = useRouter();
@@ -17,6 +28,7 @@ export default function ExamPage() {
     answerQuestion,
     nextQuestion,
     goToQuestion,
+    timeUp,
   } = useExam();
 
   // Redirect to home if no active session
@@ -58,6 +70,38 @@ export default function ExamPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
+  // Countdown timer
+  const hasTimer = !!(session?.timeLimitMs && session?.startedAt);
+  const [remainingMs, setRemainingMs] = useState(() => {
+    if (session?.timeLimitMs && session?.startedAt) {
+      return Math.max(0, session.timeLimitMs - (Date.now() - session.startedAt));
+    }
+    return 0;
+  });
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const timeUpFired = useRef(false);
+
+  useEffect(() => {
+    if (!hasTimer || !session?.startedAt || !session?.timeLimitMs) return;
+
+    const tick = () => {
+      const remaining = Math.max(0, session.timeLimitMs! - (Date.now() - session.startedAt!));
+      setRemainingMs(remaining);
+      if (remaining <= 0 && !timeUpFired.current) {
+        timeUpFired.current = true;
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        timeUp();
+        router.push("/exam/results");
+      }
+    };
+
+    tick();
+    intervalRef.current = setInterval(tick, 1000);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [hasTimer, session?.startedAt, session?.timeLimitMs, timeUp, router]);
+
   if (!session || !currentQuestion) return null;
 
   const progress = session.currentQuestionIndex + 1;
@@ -75,9 +119,22 @@ export default function ExamPage() {
             <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
               Question {progress} of {total}
             </span>
-            <span className="text-xs text-zinc-400 dark:text-zinc-500">
-              {scenarioName}
-            </span>
+            <div className="flex items-center gap-3">
+              {hasTimer && !isReviewMode && (
+                <span
+                  className={`text-sm font-mono font-semibold tabular-nums ${
+                    remainingMs <= 5 * 60 * 1000
+                      ? "text-red-600 dark:text-red-400"
+                      : "text-zinc-600 dark:text-zinc-400"
+                  }`}
+                >
+                  {formatTime(remainingMs)}
+                </span>
+              )}
+              <span className="text-xs text-zinc-400 dark:text-zinc-500">
+                {scenarioName}
+              </span>
+            </div>
           </div>
           <div className="h-1.5 w-full rounded-full bg-zinc-200 dark:bg-zinc-800">
             <div

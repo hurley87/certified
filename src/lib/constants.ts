@@ -56,3 +56,10 @@ export const SCENARIOS: ScenarioInfo[] = [
 export const PASSING_SCORE = 720;
 export const MIN_SCALED_SCORE = 100;
 export const MAX_SCALED_SCORE = 1000;
+
+/** Time limits in milliseconds, keyed by question count. No entry = no timer. */
+export const EXAM_TIME_LIMITS: Record<number, number> = {
+  15: 30 * 60 * 1000,   // 30 minutes
+  30: 60 * 60 * 1000,   // 1 hour
+  60: 120 * 60 * 1000,  // 2 hours
+};

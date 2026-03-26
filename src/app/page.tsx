@@ -3,14 +3,23 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useExam } from "@/context/ExamContext";
-import { DOMAINS } from "@/lib/constants";
+import { DOMAINS, EXAM_TIME_LIMITS } from "@/lib/constants";
 import { questions } from "@/data/questions";
 
 const QUESTION_COUNTS = [
   { label: "15", value: 15 },
   { label: "30", value: 30 },
+  { label: "60", value: 60 },
   { label: "All", value: questions.length },
 ];
+
+function formatTimeLimit(questionCount: number): string {
+  const ms = EXAM_TIME_LIMITS[questionCount];
+  if (!ms) return "No time limit";
+  const minutes = ms / 60_000;
+  if (minutes >= 60) return `${minutes / 60} hour${minutes > 60 ? "s" : ""}`;
+  return `${minutes} minutes`;
+}
 
 export default function Home() {
   const [questionCount, setQuestionCount] = useState(30);
@@ -77,6 +86,9 @@ export default function Home() {
               </button>
             ))}
           </div>
+          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+            {formatTimeLimit(questionCount)}
+          </p>
         </div>
 
         <button

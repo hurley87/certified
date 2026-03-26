@@ -58,13 +58,13 @@ export const questions: Question[] = [
     taskStatement: "1.1: Design agentic loops",
     question: "In a multi-agent research system, the coordinator agent calls a web search subagent, which returns results. The coordinator then needs to decide whether to call the document analysis subagent or synthesize the findings. A junior developer proposes terminating the coordinator's loop after exactly 3 iterations to prevent runaway costs. What is the primary risk of this approach?",
     options: [
-      { label: "A", text: "Three iterations is too many and will always exceed the token budget." },
-      { label: "B", text: "Arbitrary iteration caps can prematurely end complex research tasks that legitimately require more steps, while also wasting iterations on simple tasks that need fewer." },
-      { label: "C", text: "The coordinator should never loop at all; it should make all decisions in a single pass." },
-      { label: "D", text: "Three iterations is the correct number, but it should be configurable via an environment variable." }
+      { label: "A", text: "Keep the cap at 3, but lower temperature so the model converges sooner." },
+      { label: "B", text: "Use a fixed cap and add a prompt saying 'finish quickly' to avoid incomplete work." },
+      { label: "C", text: "Replace looping with one long prompt so the model plans and executes in a single turn." },
+      { label: "D", text: "A fixed cap can cut off valid multi-step research and still waste steps on simple tasks; loop termination should be driven by model state with separate safety limits." }
     ],
-    correctAnswer: "B",
-    explanation: "Arbitrary iteration caps are an anti-pattern in agentic loop design. A fixed cap of 3 will cut short a complex research task that genuinely needs 5 tool calls (e.g., search, analyze doc 1, analyze doc 2, cross-reference, synthesize), producing incomplete results. Conversely, it forces the system to run 3 iterations even when 1 would suffice. Option A is wrong because 3 iterations is not inherently too many. Option C is wrong because multi-step research inherently requires looping. Option D misses the fundamental issue: the problem is not the number but the arbitrary fixed nature of the cap. The correct approach is to rely on stop_reason to let the model determine when it has enough information."
+    correctAnswer: "D",
+    explanation: "The risk is coupling correctness to an arbitrary iteration count. Some tasks legitimately need more than three steps, while simpler tasks can finish in fewer. The better pattern is model-driven termination (for example, via stop reasons) plus separate operational safeguards such as wall-clock timeouts or budget controls. Options A, B, and C still anchor control flow to brittle heuristics rather than task state."
   },
   {
     id: 3,
@@ -73,13 +73,13 @@ export const questions: Question[] = [
     taskStatement: "1.1: Design agentic loops",
     question: "A developer is using Claude to explore a legacy codebase. The agent reads files, searches for patterns, and traces call chains across multiple modules. The developer's implementation appends each tool result to the conversation messages array before sending the next API request. Why is this append-then-resend pattern essential?",
     options: [
-      { label: "A", text: "It is not essential; the model remembers previous tool results from the session automatically." },
-      { label: "B", text: "Appending tool results to the conversation provides the model with the full context of what it has discovered so far, enabling it to make informed decisions about what to explore next." },
-      { label: "C", text: "It is only needed for billing purposes so Anthropic can track tool usage." },
-      { label: "D", text: "Tool results should be summarized and replaced, not appended, to keep the context window small." }
+      { label: "A", text: "Without resending prior tool outputs, each turn lacks the evidence needed for the next decision because API calls are stateless." },
+      { label: "B", text: "It is only required when using more than one tool in the same conversation." },
+      { label: "C", text: "Appending tool results mainly improves token billing accuracy and analytics quality." },
+      { label: "D", text: "Resending is optional because the model automatically persists tool history server-side." }
     ],
-    correctAnswer: "B",
-    explanation: "In an agentic loop, the model is stateless between API calls. Each request must include the full conversation history including all previous tool results. By appending tool results to the messages array, you give the model the complete picture of what it has already discovered, allowing it to reason about next steps. Option A is wrong because the API is stateless - there is no automatic session memory. Option C is incorrect; appending is about context, not billing. Option D describes an optimization that can be applied selectively but is not the general approach - premature summarization can lose critical details the model needs for reasoning."
+    correctAnswer: "A",
+    explanation: "Agent loops depend on carrying forward tool outputs as explicit context. If you do not append and resend them, the next model call cannot reliably reason over prior findings. B and C confuse context management with operational concerns. D is incorrect because server-side implicit memory is not the default contract for these request patterns."
   },
   {
     id: 4,
@@ -88,13 +88,13 @@ export const questions: Question[] = [
     taskStatement: "1.1: Design agentic loops",
     question: "Your CI pipeline uses an agent to review pull requests. The agent reads changed files, checks for style violations, runs static analysis tools, and posts comments. During testing, you notice the agent sometimes enters an infinite loop, repeatedly calling the same Bash tool to run linting. Which approach best prevents this while preserving the agent's ability to handle complex PRs?",
     options: [
-      { label: "A", text: "Add a hard cap of 10 tool calls and terminate the loop regardless of the stop_reason." },
-      { label: "B", text: "Check stop_reason for loop control, but add a safety timeout (e.g., 5 minutes wall-clock time) and log when it triggers so you can investigate the root cause." },
-      { label: "C", text: "Parse the agent's text output for the word 'loop' or 'repeating' to detect when it is stuck." },
-      { label: "D", text: "Remove the Bash tool from the agent's available tools so it cannot run linting." }
+      { label: "A", text: "Limit every review to exactly 10 tool calls so loops cannot happen." },
+      { label: "B", text: "Detect loops by searching assistant text for words like 'retrying' before each tool call." },
+      { label: "C", text: "Use model stop state for normal control flow, plus a wall-clock timeout and observability hooks for runaway behavior." },
+      { label: "D", text: "Disable the Bash tool whenever a command repeats more than once." }
     ],
-    correctAnswer: "B",
-    explanation: "The best approach combines proper stop_reason-based loop control with a practical safety mechanism. A wall-clock timeout lets complex PRs use as many steps as needed while preventing genuine infinite loops, and logging the timeout helps debug the root cause. Option A's hard cap is an arbitrary iteration limit that may cut short legitimate complex reviews. Option C is fragile natural language parsing - an anti-pattern. Option D removes essential functionality; the agent needs Bash to run linting. The right solution preserves full capability while adding a sensible safety net."
+    correctAnswer: "C",
+    explanation: "Reliable loop control should follow structured model state, not text heuristics. A separate timeout and telemetry path catches pathological runs without harming valid long reviews. A and D can block legitimate work, while B is brittle because wording-based detection is unreliable."
   },
   {
     id: 5,
@@ -103,13 +103,13 @@ export const questions: Question[] = [
     taskStatement: "1.1: Design agentic loops",
     question: "You are building a structured data extraction pipeline that processes invoices. The agent calls tools to read PDFs, extract fields, validate against a JSON schema, and retry extraction for any fields that fail validation. A colleague suggests checking if the assistant's response contains the JSON output to determine loop termination. What is wrong with this approach?",
     options: [
-      { label: "A", text: "JSON output in the assistant's response is always valid, so there is no need to check." },
-      { label: "B", text: "Parsing the assistant's natural language response for structured output is fragile; instead, use stop_reason to determine when the model is done, and validate the extracted data separately." },
-      { label: "C", text: "The assistant never outputs JSON in its text response; it only returns JSON through tool calls." },
-      { label: "D", text: "This approach is correct and is the recommended pattern for data extraction agents." }
+      { label: "A", text: "It mixes completion control with output formatting; loop completion should be based on structured response state, and JSON validity should be checked independently." },
+      { label: "B", text: "It is only wrong when extracting more than ten fields from one document." },
+      { label: "C", text: "The model cannot produce JSON in message text, only in tool results." },
+      { label: "D", text: "It is acceptable if the prompt includes 'respond only with JSON' at the top." }
     ],
-    correctAnswer: "B",
-    explanation: "Relying on parsing the assistant's text response for JSON (or any structured signal) to control the agentic loop is an anti-pattern. The model might include partial JSON, commentary around JSON, or JSON-like text that is not the final output. The correct approach is to use stop_reason for loop control (continue on \"tool_use\", exit on \"end_turn\") and then validate the extracted data through a separate validation step. Option A is wrong because JSON in text responses can be malformed. Option C is wrong because models can and do output JSON in text. Option D recommends the anti-pattern."
+    correctAnswer: "A",
+    explanation: "The design flaw is conflating two concerns: termination logic and payload validation. Loop progression should depend on structured model/tool state, while data quality should be enforced with schema validation and retry rules. B, C, and D rely on assumptions about response shape that are not robust in production."
   },
   {
     id: 6,
@@ -118,13 +118,13 @@ export const questions: Question[] = [
     taskStatement: "1.1: Design agentic loops",
     question: "Your customer support agent processes a refund request. The API response includes a tool_use content block requesting process_refund with amount: 45.99. After executing the refund tool and getting a success result, what should your code do next?",
     options: [
-      { label: "A", text: "Return the refund success message to the user immediately and close the loop." },
-      { label: "B", text: "Append the tool result to the messages array and make another API call, letting stop_reason determine whether the agent continues or stops." },
-      { label: "C", text: "Parse the tool result for the word 'success' and terminate if found." },
-      { label: "D", text: "Discard the tool result and ask the model to summarize what happened." }
+      { label: "A", text: "End the loop immediately because the refund action already succeeded." },
+      { label: "B", text: "Check the tool payload for the word 'success' and stop if present." },
+      { label: "C", text: "Store the tool result in logs only and return a canned confirmation to the user." },
+      { label: "D", text: "Append the tool result to conversation state and call the model again so it can decide next actions or termination." }
     ],
-    correctAnswer: "B",
-    explanation: "After executing a tool, the result must be appended to the conversation and sent back to the model. The model may need to take additional actions (e.g., send a confirmation message, update the ticket status, or call escalate_to_human if the refund partially failed). Only the stop_reason should determine loop termination. Option A prematurely exits - the model might want to confirm the refund to the customer or take follow-up actions. Option C is natural language parsing of tool output, which is fragile. Option D discards valuable context the model needs to reason about next steps."
+    correctAnswer: "D",
+    explanation: "A successful tool call is usually one step in a broader workflow. The result should be fed back into the conversation so the model can decide whether to confirm, follow up, escalate, or end. A, B, and C terminate based on ad hoc assumptions instead of structured loop control."
   },
 
   // --- 1.2: Multi-agent coordinator-subagent patterns ---
@@ -150,13 +150,13 @@ export const questions: Question[] = [
     taskStatement: "1.2: Multi-agent coordinator-subagent patterns",
     question: "In your multi-agent research system, the coordinator delegates a task to the web search subagent. The web search subagent has its own conversation context. What is the key benefit of this isolated context approach?",
     options: [
-      { label: "A", text: "It reduces API costs because each subagent uses fewer tokens than a single large conversation." },
-      { label: "B", text: "Each subagent operates with only the context relevant to its task, preventing cross-contamination of concerns and keeping each agent focused on its specialty." },
-      { label: "C", text: "Isolated contexts are required by the API; there is no way to share context between agents." },
-      { label: "D", text: "It allows subagents to run on different LLM providers simultaneously." }
+      { label: "A", text: "Isolated context limits irrelevant carryover and keeps each subagent focused on its scoped objective." },
+      { label: "B", text: "Isolation guarantees lower token cost in every run regardless of prompt design." },
+      { label: "C", text: "The API disallows passing explicit context to subagents, so isolation is mandatory." },
+      { label: "D", text: "Isolation is mainly useful because it enables automatic cross-provider failover." }
     ],
-    correctAnswer: "B",
-    explanation: "Isolated context is a core benefit of the hub-and-spoke multi-agent pattern. Each subagent receives only the context it needs for its specific task, which keeps it focused and prevents irrelevant information from degrading performance. The web search subagent does not need to know about the synthesis agent's prompt or the document analysis results. Option A may be a side effect but is not the primary benefit. Option C is wrong - you could share context, but you deliberately choose not to. Option D is irrelevant to the architectural decision of isolated contexts."
+    correctAnswer: "A",
+    explanation: "The primary benefit is separation of concerns: each subagent receives only context needed for its role, which improves focus and reduces interference from unrelated state. Cost savings can occur but are not guaranteed. C and D claim constraints or capabilities that are unrelated to why this pattern is chosen."
   },
   {
     id: 9,
@@ -180,13 +180,13 @@ export const questions: Question[] = [
     taskStatement: "1.2: Multi-agent coordinator-subagent patterns",
     question: "A developer wants to use a multi-agent system to understand a legacy monolith. The coordinator decomposes the task as: Subagent A analyzes only the database layer, Subagent B analyzes only the API layer, and Subagent C analyzes only the UI layer. Each subagent is told to ignore anything outside its assigned layer. What is the primary risk of this decomposition?",
     options: [
-      { label: "A", text: "Having three subagents is too expensive; a single agent should handle all layers." },
-      { label: "B", text: "The decomposition boundaries are too narrow, risking incomplete coverage of cross-layer concerns like data flow from database through API to UI, transaction boundaries, and shared models." },
-      { label: "C", text: "The subagents will conflict because they all need to read the same files." },
-      { label: "D", text: "Three subagents is too few; each database table should have its own subagent." }
+      { label: "A", text: "Three subagents always cost more than one, so architecture quality is secondary." },
+      { label: "B", text: "Subagents cannot read overlapping files, so shared models become inaccessible." },
+      { label: "C", text: "Narrow boundaries can miss cross-layer behavior such as API-to-DB coupling, transaction flow, and shared model contracts." },
+      { label: "D", text: "The number of subagents is the issue; adding one per table resolves architectural blind spots." }
     ],
-    correctAnswer: "B",
-    explanation: "When task decomposition boundaries are too narrow, important cross-cutting concerns fall through the gaps. In a legacy monolith, understanding how data flows from the database through the API to the UI is often the most critical insight. Subagents told to strictly ignore other layers will miss shared models, cross-layer transactions, and architectural coupling. Option A is a cost concern, not an architectural risk. Option C is a practical issue but not the primary risk - file access can be coordinated. Option D makes the over-decomposition problem even worse."
+    correctAnswer: "C",
+    explanation: "The key risk is blind spots in cross-cutting behavior. Layer-only analysis can miss the end-to-end flow where many production defects and design constraints live. A and D over-index on agent count, and B assumes tooling limitations that are not inherent to the pattern."
   },
   {
     id: 11,
@@ -195,13 +195,13 @@ export const questions: Question[] = [
     taskStatement: "1.2: Multi-agent coordinator-subagent patterns",
     question: "You are designing a CI system where a coordinator agent reviews PRs by delegating to specialized subagents: a security reviewer, a style checker, and a test coverage analyzer. The security reviewer subagent detects a critical SQL injection vulnerability. In a hub-and-spoke model, how should this finding reach the PR comment?",
     options: [
-      { label: "A", text: "The security reviewer subagent posts the PR comment directly using the GitHub API." },
-      { label: "B", text: "The security reviewer returns its finding to the coordinator, which aggregates all subagent results and posts a unified PR review comment." },
-      { label: "C", text: "The security reviewer sends its finding to the style checker subagent, which formats and posts it." },
-      { label: "D", text: "Each subagent maintains its own GitHub connection and posts comments independently in parallel." }
+      { label: "A", text: "The security subagent should post directly so critical findings are not delayed." },
+      { label: "B", text: "The security subagent should forward findings to whichever subagent owns comment formatting." },
+      { label: "C", text: "Coordinator-centralized aggregation should collect subagent findings and publish one coherent review output." },
+      { label: "D", text: "Each subagent should post independently to maximize parallel throughput." }
     ],
-    correctAnswer: "B",
-    explanation: "In hub-and-spoke architecture, all communication flows through the coordinator (hub). Subagents return their results to the coordinator, which aggregates findings from all subagents and produces a unified PR review. This ensures consistent formatting, avoids duplicate comments, and lets the coordinator prioritize findings (e.g., leading with the critical SQL injection). Options A and D violate the hub-and-spoke pattern by giving subagents direct external access. Option C has subagents communicating laterally, which also violates the pattern."
+    correctAnswer: "C",
+    explanation: "Hub-and-spoke systems keep orchestration and external publishing centralized. Subagents report to the coordinator, which prioritizes, deduplicates, and formats a single review. A, B, and D break that control boundary and create fragmented or inconsistent PR feedback."
   },
 
   // --- 1.3: Subagent invocation/context passing ---
@@ -212,13 +212,13 @@ export const questions: Question[] = [
     taskStatement: "1.3: Subagent invocation/context passing",
     question: "You are implementing the coordinator in a multi-agent research system using the Claude Agent SDK. To spawn a subagent that performs web search, which of the following is the correct approach?",
     options: [
-      { label: "A", text: "Make a nested API call within the coordinator's tool handler, passing the full coordinator conversation as the subagent's prompt." },
-      { label: "B", text: "Use the Task tool with an explicit prompt containing just the research question and relevant context, and ensure allowedTools includes \"Task\" if further sub-delegation is needed." },
-      { label: "C", text: "Write the research question to a shared file and have the subagent poll for new tasks." },
-      { label: "D", text: "Use environment variables to pass the research question to a separate process that runs the subagent." }
+      { label: "A", text: "Use the Task tool with explicit scoped context, and include \"Task\" in allowed tools only when recursive delegation is required." },
+      { label: "B", text: "Create a nested raw API call and pass the full coordinator transcript so no context is lost." },
+      { label: "C", text: "Persist work items in a shared file and let subagents poll for new assignments." },
+      { label: "D", text: "Run subagents as external processes and pass context through environment variables." }
     ],
-    correctAnswer: "B",
-    explanation: "The Task tool is the SDK mechanism for spawning subagents. The prompt must explicitly contain all context the subagent needs because subagents do not inherit the parent's conversation context. If the subagent itself needs to spawn further subagents, allowedTools must include \"Task\". Option A is problematic because passing the full coordinator conversation defeats the purpose of isolated context and wastes tokens. Option C uses file-based polling, which is fragile and not how the SDK works. Option D uses process-level separation, which loses the structured tool call interface."
+    correctAnswer: "A",
+    explanation: "Task is the intended subagent mechanism. You should pass only relevant context explicitly and scope tool access intentionally, adding Task permission only when nested delegation is a real requirement. B, C, and D bypass SDK orchestration patterns and weaken reliability or control."
   },
   {
     id: 13,
@@ -2425,7 +2425,7 @@ export const questions: Question[] = [
     id: 157,
     domain: 2,
     scenario: 4,
-    taskStatement: "2.4: Integrate MCP servers",
+    taskStatement: "2.4",
     question: "Your team built an MCP server for internal docs with tools, resources, and prompts. The app needs an always-up-to-date document list to render a picker before model inference. Which MCP primitive should provide that list?",
     options: [
       { label: "A", text: "Tool, because tools are the primary way to fetch any data." },
@@ -2440,7 +2440,7 @@ export const questions: Question[] = [
     id: 158,
     domain: 2,
     scenario: 4,
-    taskStatement: "2.4: Integrate MCP servers",
+    taskStatement: "2.4",
     question: "You created a new MCP server and want to quickly verify tool schemas and outputs before wiring it into production workflows. What is the best first step?",
     options: [
       { label: "A", text: "Deploy to production and monitor failures to learn what is broken." },

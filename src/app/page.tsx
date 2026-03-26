@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useExam } from "@/context/ExamContext";
 import { DOMAINS, EXAM_TIME_LIMITS } from "@/lib/constants";
@@ -97,6 +98,13 @@ export default function Home() {
         >
           Start Exam
         </button>
+
+        <Link
+          href="/cheat-sheet"
+          className="mt-3 block w-full rounded-lg border border-zinc-200 bg-white px-6 py-3 text-center text-sm font-medium text-zinc-700 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600"
+        >
+          Cheat Sheet &mdash; Key facts to memorize
+        </Link>
       </main>
     </div>
   );

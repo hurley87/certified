@@ -1090,7 +1090,7 @@ export const questions: Question[] = [
     id: 68,
     domain: 3,
     scenario: 2,
-    taskStatement: "3.1",
+    taskStatement: "3.1: CLAUDE.md hierarchy and configuration",
     question: "Your engineering team uses Claude Code across multiple projects. A senior developer wants to enforce their personal code style preferences (e.g., tab width, import ordering) in every project they work on, without affecting teammates. Where should they place their CLAUDE.md configuration?",
     options: [
       { label: "A", text: "In the project root CLAUDE.md file" },
@@ -1105,7 +1105,7 @@ export const questions: Question[] = [
     id: 69,
     domain: 3,
     scenario: 3,
-    taskStatement: "3.1",
+    taskStatement: "3.1: CLAUDE.md hierarchy and configuration",
     question: "A team building a multi-agent research system has a monorepo with separate directories for each subagent (web-search/, doc-analysis/, synthesis/). Each subagent directory needs its own Claude Code instructions for tool usage and output format. The team also needs shared conventions across all agents. What is the most effective CLAUDE.md configuration strategy?",
     options: [
       { label: "A", text: "Put all instructions in a single root CLAUDE.md file" },
@@ -1120,7 +1120,7 @@ export const questions: Question[] = [
     id: 70,
     domain: 3,
     scenario: 2,
-    taskStatement: "3.1",
+    taskStatement: "3.1: CLAUDE.md hierarchy and configuration",
     question: "A developer's CLAUDE.md file is growing large with sections for testing standards, API conventions, database patterns, and deployment rules. They want to modularize it for maintainability. What is the recommended approach?",
     options: [
       { label: "A", text: "Split into multiple CLAUDE.md files in nested subdirectories" },
@@ -1135,7 +1135,7 @@ export const questions: Question[] = [
     id: 71,
     domain: 3,
     scenario: 5,
-    taskStatement: "3.1",
+    taskStatement: "3.1: CLAUDE.md hierarchy and configuration",
     question: "A team maintains topic-specific rule files for Claude Code: one for testing conventions, one for security review standards, and one for documentation requirements. Where should these files be stored so they are automatically loaded as project instructions?",
     options: [
       { label: "A", text: "In the project root as separate .md files" },
@@ -1150,7 +1150,7 @@ export const questions: Question[] = [
     id: 72,
     domain: 3,
     scenario: 2,
-    taskStatement: "3.2",
+    taskStatement: "3.2: Custom commands and skills",
     question: "A team wants to create a custom slash command that generates a new API endpoint with boilerplate code, tests, and documentation. The command should be available to all team members working on the project. Where should the command definition be placed?",
     options: [
       { label: "A", text: "~/.claude/commands/ on each developer's machine" },
@@ -1165,7 +1165,7 @@ export const questions: Question[] = [
     id: 73,
     domain: 3,
     scenario: 4,
-    taskStatement: "3.2",
+    taskStatement: "3.2: Custom commands and skills",
     question: "A developer frequently uses a personal workflow for exploring legacy codebases that involves specific search patterns and summarization steps. They don't want this command available to their team. Where should they define this custom command?",
     options: [
       { label: "A", text: ".claude/commands/ in the project repository" },
@@ -1180,7 +1180,7 @@ export const questions: Question[] = [
     id: 74,
     domain: 3,
     scenario: 3,
-    taskStatement: "3.2",
+    taskStatement: "3.2: Custom commands and skills",
     question: "A team is defining a skill for their multi-agent research system that needs to run in an isolated fork context and requires access to specific tools. Which frontmatter fields should be included in the SKILL.md file?",
     options: [
       { label: "A", text: "context: main, tools: [web_search, doc_analysis]" },
@@ -1195,7 +1195,7 @@ export const questions: Question[] = [
     id: 75,
     domain: 3,
     scenario: 5,
-    taskStatement: "3.2",
+    taskStatement: "3.2: Custom commands and skills",
     question: "An enterprise has defined skills at multiple levels: an enterprise-managed skill, a developer's personal skill, a project-level skill, and a plugin-provided skill, all with the same name. Which skill takes priority when invoked?",
     options: [
       { label: "A", text: "Project-level skill, since it's closest to the code" },
@@ -1210,7 +1210,7 @@ export const questions: Question[] = [
     id: 76,
     domain: 3,
     scenario: 2,
-    taskStatement: "3.3",
+    taskStatement: "3.3: Path-specific rules",
     question: "A team wants to enforce that all test files across the entire monorepo (regardless of directory) follow specific patterns: use React Testing Library, avoid enzyme, and include accessibility checks. Test files are scattered across src/components/, src/pages/, src/utils/, and packages/*/. What is the best approach?",
     options: [
       { label: "A", text: "Add a CLAUDE.md file in every directory that contains test files" },
@@ -1225,7 +1225,7 @@ export const questions: Question[] = [
     id: 77,
     domain: 3,
     scenario: 6,
-    taskStatement: "3.3",
+    taskStatement: "3.3: Path-specific rules",
     question: "A team processes multiple file types for data extraction: CSV files need specific parsing rules, JSON files need schema validation rules, and XML files need namespace handling rules. Each file type exists across many directories. What is the most maintainable Claude Code configuration?",
     options: [
       { label: "A", text: "Three separate rule files in .claude/rules/, each with a paths field matching the respective file extension (e.g., **/*.csv, **/*.json, **/*.xml)" },
@@ -1240,7 +1240,7 @@ export const questions: Question[] = [
     id: 78,
     domain: 3,
     scenario: 5,
-    taskStatement: "3.3",
+    taskStatement: "3.3: Path-specific rules",
     question: "A rule file in .claude/rules/ has the following paths field: paths: ['src/api/**/*.ts', 'src/graphql/**/*.ts']. When will this rule be loaded?",
     options: [
       { label: "A", text: "Whenever any TypeScript file in the project is edited" },
@@ -1255,7 +1255,7 @@ export const questions: Question[] = [
     id: 79,
     domain: 3,
     scenario: 4,
-    taskStatement: "3.4",
+    taskStatement: "3.4: Execution modes",
     question: "A developer needs to refactor a legacy authentication system that spans 15 files across 4 directories, with multiple valid approaches (OAuth migration, session-based refactor, or hybrid). What execution mode should they use in Claude Code?",
     options: [
       { label: "A", text: "Direct execution to quickly implement the refactor" },
@@ -1270,7 +1270,7 @@ export const questions: Question[] = [
     id: 80,
     domain: 3,
     scenario: 2,
-    taskStatement: "3.4",
+    taskStatement: "3.4: Execution modes",
     question: "A developer asks Claude Code to rename a variable in a single function from 'userData' to 'customerProfile'. What is the appropriate execution mode?",
     options: [
       { label: "A", text: "Plan mode, since renaming could have downstream effects" },
@@ -1285,7 +1285,7 @@ export const questions: Question[] = [
     id: 81,
     domain: 3,
     scenario: 4,
-    taskStatement: "3.4",
+    taskStatement: "3.4: Execution modes",
     question: "A developer is exploring an unfamiliar legacy codebase to understand how the payment processing pipeline works before making any changes. They want verbose output about file structures, function relationships, and data flow. What should they use?",
     options: [
       { label: "A", text: "Direct execution with broad search queries" },
@@ -1300,7 +1300,7 @@ export const questions: Question[] = [
     id: 82,
     domain: 3,
     scenario: 6,
-    taskStatement: "3.5",
+    taskStatement: "3.5: Iterative prompt refinement",
     question: "A developer is iterating on a Claude Code prompt for extracting product data from unstructured supplier emails. The current prompt uses prose like 'extract relevant product information including prices and quantities.' Results are inconsistent. What is the most effective refinement approach?",
     options: [
       { label: "A", text: "Add more detailed prose describing what 'relevant' means" },
@@ -1315,7 +1315,7 @@ export const questions: Question[] = [
     id: 83,
     domain: 3,
     scenario: 2,
-    taskStatement: "3.5",
+    taskStatement: "3.5: Iterative prompt refinement",
     question: "A developer wants Claude Code to generate a complex data validation module but isn't sure about the exact requirements yet. They want Claude to help clarify requirements before implementation. What pattern should they use?",
     options: [
       { label: "A", text: "Provide a vague prompt and iterate on the output" },
@@ -1330,7 +1330,7 @@ export const questions: Question[] = [
     id: 84,
     domain: 3,
     scenario: 5,
-    taskStatement: "3.5",
+    taskStatement: "3.5: Iterative prompt refinement",
     question: "A CI pipeline uses Claude Code to fix linting issues. When Claude fixes one issue, it sometimes introduces new ones. What iterative strategy is most effective?",
     options: [
       { label: "A", text: "Fix all issues in parallel in a single pass" },
@@ -1345,7 +1345,7 @@ export const questions: Question[] = [
     id: 85,
     domain: 3,
     scenario: 6,
-    taskStatement: "3.5",
+    taskStatement: "3.5: Iterative prompt refinement",
     question: "A team is using Claude Code to build an invoice data extractor. They want to verify that their prompt handles edge cases correctly (missing fields, unusual formats, multi-currency invoices). What is the best iterative approach?",
     options: [
       { label: "A", text: "Deploy to production and monitor error rates" },
@@ -1360,7 +1360,7 @@ export const questions: Question[] = [
     id: 86,
     domain: 3,
     scenario: 5,
-    taskStatement: "3.6",
+    taskStatement: "3.6: CI/CD integration",
     question: "A CI pipeline needs to run Claude Code for automated code review on every pull request. The review should run non-interactively and produce a pass/fail result. Which Claude Code flags are essential?",
     options: [
       { label: "A", text: "--batch and --silent for background processing" },
@@ -1375,7 +1375,7 @@ export const questions: Question[] = [
     id: 87,
     domain: 3,
     scenario: 5,
-    taskStatement: "3.6",
+    taskStatement: "3.6: CI/CD integration",
     question: "A team's CI pipeline needs Claude Code to output structured JSON matching a specific schema so downstream tools can parse the review results. Which flags should they combine?",
     options: [
       { label: "A", text: "-p with --output-format json and --json-schema to define the expected structure" },
@@ -1390,7 +1390,7 @@ export const questions: Question[] = [
     id: 88,
     domain: 3,
     scenario: 5,
-    taskStatement: "3.6",
+    taskStatement: "3.6: CI/CD integration",
     question: "A CI pipeline runs Claude Code for both code review and test generation on the same PR. A developer notices that context from the code review is leaking into the test generation step, causing test names to reference review comments. What is the correct solution?",
     options: [
       { label: "A", text: "Add a --clear-context flag between runs" },
@@ -1405,7 +1405,7 @@ export const questions: Question[] = [
     id: 89,
     domain: 3,
     scenario: 5,
-    taskStatement: "3.6",
+    taskStatement: "3.6: CI/CD integration",
     question: "A CI pipeline uses Claude Code to generate tests for new code. The repository already has 500+ existing test files. Developers notice Claude sometimes generates tests that duplicate existing test cases. What should the pipeline do?",
     options: [
       { label: "A", text: "Add a deduplication step after test generation" },
@@ -1420,7 +1420,7 @@ export const questions: Question[] = [
     id: 90,
     domain: 3,
     scenario: 1,
-    taskStatement: "3.1",
+    taskStatement: "3.1: CLAUDE.md hierarchy and configuration",
     question: "A support team deploys a customer service agent using Claude Code. They need different instructions for handling refund workflows versus escalation workflows, and both sets of rules should apply project-wide. How should they organize their CLAUDE.md configuration?",
     options: [
       { label: "A", text: "Create two separate CLAUDE.md files in the project root" },
@@ -1435,7 +1435,7 @@ export const questions: Question[] = [
     id: 91,
     domain: 3,
     scenario: 2,
-    taskStatement: "3.2",
+    taskStatement: "3.2: Custom commands and skills",
     question: "A developer is creating a custom slash command that accepts a component name as an argument and generates a React component with tests. They want to provide a hint to users about what argument to pass. Which frontmatter field should they use?",
     options: [
       { label: "A", text: "description: 'Component name to generate'" },
@@ -1450,7 +1450,7 @@ export const questions: Question[] = [
     id: 92,
     domain: 3,
     scenario: 4,
-    taskStatement: "3.3",
+    taskStatement: "3.3: Path-specific rules",
     question: "A team has a convention that all database migration files (found in various packages within a monorepo) must include rollback logic and use specific transaction patterns. The migration files follow a naming pattern like YYYYMMDD_description.sql across multiple directories. A directory-level CLAUDE.md won't work because migrations exist in packages/*/migrations/. What should they use?",
     options: [
       { label: "A", text: "A root CLAUDE.md with migration instructions that apply to all files" },
@@ -1465,7 +1465,7 @@ export const questions: Question[] = [
     id: 93,
     domain: 3,
     scenario: 3,
-    taskStatement: "3.4",
+    taskStatement: "3.4: Execution modes",
     question: "A developer needs to add a new subagent to a multi-agent research system. This requires creating a new directory, defining agent configuration, writing tool integrations, updating the coordinator routing logic, and modifying shared types. What is the appropriate approach?",
     options: [
       { label: "A", text: "Direct execution since the developer knows exactly what to add" },
@@ -1480,7 +1480,7 @@ export const questions: Question[] = [
     id: 94,
     domain: 3,
     scenario: 1,
-    taskStatement: "3.5",
+    taskStatement: "3.5: Iterative prompt refinement",
     question: "A customer support agent built with Claude Code occasionally provides refund amounts that don't match the order total. The team wants to iteratively improve accuracy. Which refinement technique is most directly effective?",
     options: [
       { label: "A", text: "Add more general instructions about being accurate with numbers" },
@@ -1495,7 +1495,7 @@ export const questions: Question[] = [
     id: 95,
     domain: 3,
     scenario: 5,
-    taskStatement: "3.6",
+    taskStatement: "3.6: CI/CD integration",
     question: "A team uses Claude Code in CI to provide automated PR feedback. Reviewers notice that Claude's comments sometimes reference code from other PRs that were reviewed in the same CI runner. What is the root cause and fix?",
     options: [
       { label: "A", text: "The CI runner has too much memory; reduce the allocation" },
@@ -1510,7 +1510,7 @@ export const questions: Question[] = [
     id: 96,
     domain: 3,
     scenario: 6,
-    taskStatement: "3.6",
+    taskStatement: "3.6: CI/CD integration",
     question: "A batch data extraction pipeline uses Claude Code in CI to process incoming files. The team wants the output to conform to a specific JSON schema so it can be loaded directly into their data warehouse. What is the correct approach?",
     options: [
       { label: "A", text: "Add JSON formatting instructions to the prompt and hope for the best" },
@@ -1525,7 +1525,7 @@ export const questions: Question[] = [
     id: 97,
     domain: 3,
     scenario: 5,
-    taskStatement: "3.1",
+    taskStatement: "3.1: CLAUDE.md hierarchy and configuration",
     question: "A team discovers that their CI pipeline's Claude Code instructions conflict with a developer's personal ~/.claude/CLAUDE.md settings, causing inconsistent review results between local development and CI. What is the correct understanding of CLAUDE.md precedence?",
     options: [
       { label: "A", text: "CI environment variables override all CLAUDE.md settings" },
@@ -1540,7 +1540,7 @@ export const questions: Question[] = [
     id: 98,
     domain: 4,
     scenario: 5,
-    taskStatement: "4.1",
+    taskStatement: "4.1: Explicit criteria",
     question: "A CI code review agent flags 60% of functions as 'potentially problematic,' overwhelming developers with false positives. The prompt says 'review code for potential issues.' What is the most effective fix?",
     options: [
       { label: "A", text: "Add a confidence threshold: only flag issues with >80% confidence" },
@@ -1555,7 +1555,7 @@ export const questions: Question[] = [
     id: 99,
     domain: 4,
     scenario: 1,
-    taskStatement: "4.1",
+    taskStatement: "4.1: Explicit criteria",
     question: "A customer support agent uses sentiment analysis to flag potentially angry customers for priority handling. The team notices many neutral queries are being flagged. A team member suggests adding a confidence score threshold to reduce false positives. Is this a good approach?",
     options: [
       { label: "A", text: "Yes, a 90% confidence threshold will eliminate most false positives" },
@@ -1570,7 +1570,7 @@ export const questions: Question[] = [
     id: 100,
     domain: 4,
     scenario: 6,
-    taskStatement: "4.1",
+    taskStatement: "4.1: Explicit criteria",
     question: "A data extraction pipeline flags extracted prices as 'suspicious' based on the vague criterion 'unusually high or low prices.' This generates hundreds of false positives daily. What change would most reduce false positives while maintaining detection of genuine anomalies?",
     options: [
       { label: "A", text: "Add explicit criteria: 'flag prices that exceed 3 standard deviations from the product category median or are negative values'" },
@@ -1585,7 +1585,7 @@ export const questions: Question[] = [
     id: 101,
     domain: 4,
     scenario: 5,
-    taskStatement: "4.1",
+    taskStatement: "4.1: Explicit criteria",
     question: "A code review agent has been producing many false positive 'security vulnerability' warnings. The team realizes that these false positives erode developer trust in the tool. Which statement best describes why reducing false positives is critical?",
     options: [
       { label: "A", text: "False positives increase API costs due to longer conversations" },
@@ -1600,7 +1600,7 @@ export const questions: Question[] = [
     id: 102,
     domain: 4,
     scenario: 6,
-    taskStatement: "4.2",
+    taskStatement: "4.2: Few-shot prompting",
     question: "A team is building a data extraction system that must handle ambiguous supplier emails where product names sometimes appear in subject lines, sometimes in the body, and sometimes abbreviated. Which prompting technique is most effective for achieving consistent extraction across these variations?",
     options: [
       { label: "A", text: "Zero-shot with detailed instructions about where to look for product names" },
@@ -1615,7 +1615,7 @@ export const questions: Question[] = [
     id: 103,
     domain: 4,
     scenario: 1,
-    taskStatement: "4.2",
+    taskStatement: "4.2: Few-shot prompting",
     question: "A support agent needs to categorize customer issues into predefined categories. Some issues could plausibly fit multiple categories (e.g., 'my refund didn't arrive' could be billing or shipping). How should the prompt handle this?",
     options: [
       { label: "A", text: "Provide few-shot examples that explicitly demonstrate how to categorize ambiguous cases, showing the reasoning for the chosen category" },
@@ -1630,7 +1630,7 @@ export const questions: Question[] = [
     id: 104,
     domain: 4,
     scenario: 6,
-    taskStatement: "4.2",
+    taskStatement: "4.2: Few-shot prompting",
     question: "An extraction system encounters a new invoice format it hasn't seen before, but the format shares structural similarities with formats shown in the few-shot examples. What is the expected behavior?",
     options: [
       { label: "A", text: "The model will fail because the exact format wasn't in the examples" },
@@ -1645,7 +1645,7 @@ export const questions: Question[] = [
     id: 105,
     domain: 4,
     scenario: 6,
-    taskStatement: "4.2",
+    taskStatement: "4.2: Few-shot prompting",
     question: "A team notices their extraction model occasionally hallucinates product codes that don't exist in the source document. Which prompting approach most directly addresses this?",
     options: [
       { label: "A", text: "Add a post-processing validation step that checks product codes against a database" },
@@ -1660,7 +1660,7 @@ export const questions: Question[] = [
     id: 106,
     domain: 4,
     scenario: 6,
-    taskStatement: "4.3",
+    taskStatement: "4.3: Structured output with tool_use",
     question: "A team needs Claude to reliably return structured JSON for a data extraction pipeline. They're debating between instructing Claude to output JSON via the system prompt versus using tool_use with a JSON schema. Which approach is most reliable?",
     options: [
       { label: "A", text: "System prompt instructions with 'respond only in JSON' are equally reliable" },
@@ -1675,7 +1675,7 @@ export const questions: Question[] = [
     id: 107,
     domain: 4,
     scenario: 1,
-    taskStatement: "4.3",
+    taskStatement: "4.3: Structured output with tool_use",
     question: "A customer support system uses tool_use to structure its responses. The team wants Claude to always use a specific tool rather than sometimes responding with plain text. Which tool_choice setting should they use?",
     options: [
       { label: "A", text: "tool_choice: 'auto' - let Claude decide when to use tools" },
@@ -1690,7 +1690,7 @@ export const questions: Question[] = [
     id: 108,
     domain: 4,
     scenario: 6,
-    taskStatement: "4.3",
+    taskStatement: "4.3: Structured output with tool_use",
     question: "A team uses strict JSON schemas for invoice extraction. After deployment, they discover that while the JSON is always syntactically valid, some extracted values are semantically wrong (e.g., a shipping address in the billing address field). What does this reveal about strict schemas?",
     options: [
       { label: "A", text: "The schema isn't strict enough and needs more regex validation" },
@@ -1705,7 +1705,7 @@ export const questions: Question[] = [
     id: 109,
     domain: 4,
     scenario: 6,
-    taskStatement: "4.3",
+    taskStatement: "4.3: Structured output with tool_use",
     question: "An extraction schema has a field for 'tax_id' that is sometimes not present in source documents. The team notices Claude sometimes fills in plausible but fabricated tax IDs. What schema design change would help prevent this?",
     options: [
       { label: "A", text: "Make the tax_id field required and add validation" },
@@ -1720,7 +1720,7 @@ export const questions: Question[] = [
     id: 110,
     domain: 4,
     scenario: 6,
-    taskStatement: "4.4",
+    taskStatement: "4.4: Validation-retry loops",
     question: "An extraction pipeline produces a JSON output that fails schema validation. The error is: 'price field is string, expected number.' What is the most effective retry strategy?",
     options: [
       { label: "A", text: "Simply retry the same prompt; the model may produce different output" },
@@ -1735,7 +1735,7 @@ export const questions: Question[] = [
     id: 111,
     domain: 4,
     scenario: 1,
-    taskStatement: "4.4",
+    taskStatement: "4.4: Validation-retry loops",
     question: "A support agent tries to look up a customer's order but the order number isn't in the system. The agent retries the lookup three times, each time failing. What should the system do?",
     options: [
       { label: "A", text: "Retry with different query formats (e.g., with/without dashes in order number)" },
@@ -1750,7 +1750,7 @@ export const questions: Question[] = [
     id: 112,
     domain: 4,
     scenario: 5,
-    taskStatement: "4.4",
+    taskStatement: "4.4: Validation-retry loops",
     question: "A CI review system has a high false-positive rate for 'suspicious patterns.' The team adds a detected_pattern field to the review output. How should this field be used?",
     options: [
       { label: "A", text: "To automatically filter out known false positive patterns" },
@@ -1765,7 +1765,7 @@ export const questions: Question[] = [
     id: 113,
     domain: 4,
     scenario: 6,
-    taskStatement: "4.4",
+    taskStatement: "4.4: Validation-retry loops",
     question: "An invoice extraction system is extracting both a stated total from the document and individual line items. The team wants to detect extraction errors. What self-correction technique should they implement?",
     options: [
       { label: "A", text: "Run the extraction twice and compare outputs" },
@@ -1780,7 +1780,7 @@ export const questions: Question[] = [
     id: 114,
     domain: 4,
     scenario: 6,
-    taskStatement: "4.5",
+    taskStatement: "4.5: Batch processing",
     question: "A company needs to process 10,000 supplier invoices for data extraction. The results are needed within 48 hours, not in real-time. Cost is a primary concern. Which approach is most appropriate?",
     options: [
       { label: "A", text: "Process all invoices synchronously through the standard API" },
@@ -1795,7 +1795,7 @@ export const questions: Question[] = [
     id: 115,
     domain: 4,
     scenario: 1,
-    taskStatement: "4.5",
+    taskStatement: "4.5: Batch processing",
     question: "A support team wants to use the Message Batches API to process customer support tickets. However, each ticket may require multiple tool calls (lookup_order, get_customer, process_refund) to resolve. Is the Batches API appropriate?",
     options: [
       { label: "A", text: "Yes, the Batches API handles multi-turn tool calling automatically" },
@@ -1810,7 +1810,7 @@ export const questions: Question[] = [
     id: 116,
     domain: 4,
     scenario: 6,
-    taskStatement: "4.5",
+    taskStatement: "4.5: Batch processing",
     question: "A team submits a batch of 5,000 invoice extraction requests using the Message Batches API. They need to match each result back to its source invoice for downstream processing. What mechanism does the API provide for this?",
     options: [
       { label: "A", text: "Results are returned in the same order as submitted" },
@@ -1825,7 +1825,7 @@ export const questions: Question[] = [
     id: 117,
     domain: 4,
     scenario: 6,
-    taskStatement: "4.5",
+    taskStatement: "4.5: Batch processing",
     question: "A real-time data extraction API receives individual documents and must return results within 2 seconds. A developer suggests switching to the Message Batches API to save costs. Is this appropriate?",
     options: [
       { label: "A", text: "Yes, the cost savings justify a slight increase in latency" },
@@ -1840,7 +1840,7 @@ export const questions: Question[] = [
     id: 118,
     domain: 4,
     scenario: 5,
-    taskStatement: "4.6",
+    taskStatement: "4.6: Multi-instance review",
     question: "A CI pipeline asks Claude to generate code and then review its own output for bugs in the same conversation. The review rarely finds issues. What is the fundamental problem?",
     options: [
       { label: "A", text: "The model is too confident in its own output" },
@@ -1855,7 +1855,7 @@ export const questions: Question[] = [
     id: 119,
     domain: 4,
     scenario: 5,
-    taskStatement: "4.6",
+    taskStatement: "4.6: Multi-instance review",
     question: "A team wants more effective automated code review in CI. They've learned that self-review is limited. What alternative approach would be most effective?",
     options: [
       { label: "A", text: "Use a different model for review than for generation" },
@@ -1870,7 +1870,7 @@ export const questions: Question[] = [
     id: 120,
     domain: 4,
     scenario: 5,
-    taskStatement: "4.6",
+    taskStatement: "4.6: Multi-instance review",
     question: "A large PR modifies 20 files across 3 modules. The team wants comprehensive AI review. What multi-pass review strategy would be most effective?",
     options: [
       { label: "A", text: "Send all 20 files in a single context window for holistic review" },
@@ -1885,7 +1885,7 @@ export const questions: Question[] = [
     id: 121,
     domain: 4,
     scenario: 3,
-    taskStatement: "4.1",
+    taskStatement: "4.1: Explicit criteria",
     question: "A research synthesis agent is flagging too many sources as 'potentially unreliable.' The current instruction says 'evaluate source reliability.' What explicit criteria would most effectively reduce false positives while maintaining detection of truly unreliable sources?",
     options: [
       { label: "A", text: "Flag sources with confidence below 70%" },
@@ -1900,7 +1900,7 @@ export const questions: Question[] = [
     id: 122,
     domain: 4,
     scenario: 1,
-    taskStatement: "4.2",
+    taskStatement: "4.2: Few-shot prompting",
     question: "A customer support bot must extract order IDs from free-text customer messages. Customers write order IDs in various formats: 'ORD-12345', '#12345', 'order number 12345', or just '12345' buried in a sentence. What prompting technique would yield the most consistent extraction?",
     options: [
       { label: "A", text: "A regex pattern that matches all known order ID formats" },
@@ -1915,7 +1915,7 @@ export const questions: Question[] = [
     id: 123,
     domain: 4,
     scenario: 1,
-    taskStatement: "4.3",
+    taskStatement: "4.3: Structured output with tool_use",
     question: "A support agent uses tool_use with tool_choice set to 'auto.' The team notices that Claude sometimes responds with plain text instead of using the get_customer tool when a customer provides their email. What should they change?",
     options: [
       { label: "A", text: "Add stronger instructions in the system prompt to always use tools" },
@@ -1930,7 +1930,7 @@ export const questions: Question[] = [
     id: 124,
     domain: 4,
     scenario: 6,
-    taskStatement: "4.4",
+    taskStatement: "4.4: Validation-retry loops",
     question: "An extraction system retries a failed request by appending the validation error. On the second attempt, it produces different but still invalid output. On the third attempt, it succeeds. What is the recommended limit for retry attempts?",
     options: [
       { label: "A", text: "Unlimited retries until success" },
@@ -1945,7 +1945,7 @@ export const questions: Question[] = [
     id: 125,
     domain: 4,
     scenario: 6,
-    taskStatement: "4.5",
+    taskStatement: "4.5: Batch processing",
     question: "A team processes monthly batches of 50,000 documents using the Message Batches API. They want to monitor progress and handle partial failures. Which statement about the Batches API is correct?",
     options: [
       { label: "A", text: "The API provides real-time progress updates via webhooks" },
@@ -1960,7 +1960,7 @@ export const questions: Question[] = [
     id: 126,
     domain: 4,
     scenario: 3,
-    taskStatement: "4.6",
+    taskStatement: "4.6: Multi-instance review",
     question: "A multi-agent research system has a synthesis agent that combines findings from web search and document analysis subagents. The coordinator wants the synthesis to be reviewed for accuracy. Should the same synthesis agent review its own output?",
     options: [
       { label: "A", text: "Yes, the synthesis agent has the most context about the combined findings" },
@@ -1975,7 +1975,7 @@ export const questions: Question[] = [
     id: 127,
     domain: 4,
     scenario: 1,
-    taskStatement: "4.1",
+    taskStatement: "4.1: Explicit criteria",
     question: "A support agent flags potential fraud using the criterion 'unusual account activity.' This generates 200+ false positives daily. Which replacement criteria would be most effective?",
     options: [
       { label: "A", text: "Add a machine learning fraud detection model as a pre-filter" },
@@ -1990,7 +1990,7 @@ export const questions: Question[] = [
     id: 128,
     domain: 5,
     scenario: 1,
-    taskStatement: "5.1",
+    taskStatement: "5.1: Context preservation",
     question: "A customer support agent is handling a complex case that has spanned 30+ messages. The conversation includes specific dollar amounts ($47.99 refund, $12.50 shipping credit), order numbers, and timestamps. The context is getting long. A developer suggests using progressive summarization to compress the conversation. What is the primary risk?",
     options: [
       { label: "A", text: "The summarization will take too long to process" },
@@ -2005,7 +2005,7 @@ export const questions: Question[] = [
     id: 129,
     domain: 5,
     scenario: 3,
-    taskStatement: "5.1",
+    taskStatement: "5.1: Context preservation",
     question: "A research agent has accumulated findings from 15 different sources across a long conversation. A study from source #3 contradicts findings from source #11, but both were discussed many messages apart. What technique helps ensure this contradiction is not overlooked?",
     options: [
       { label: "A", text: "Increase the context window size to hold all findings" },
@@ -2020,7 +2020,7 @@ export const questions: Question[] = [
     id: 130,
     domain: 5,
     scenario: 1,
-    taskStatement: "5.1",
+    taskStatement: "5.1: Context preservation",
     question: "A support agent uses multiple tools (get_customer, lookup_order, process_refund) during a long conversation. The developer notices that tool results are accumulating and consuming a disproportionate amount of the context window. What is happening and what should be done?",
     options: [
       { label: "A", text: "Tool results are being duplicated; enable deduplication" },
@@ -2035,7 +2035,7 @@ export const questions: Question[] = [
     id: 131,
     domain: 5,
     scenario: 3,
-    taskStatement: "5.1",
+    taskStatement: "5.1: Context preservation",
     question: "A research agent processes information from 20 sources in a long conversation. The 'lost in the middle' effect means information from which position is most likely to be overlooked?",
     options: [
       { label: "A", text: "The most recent sources, because the model focuses on earlier context" },
@@ -2050,7 +2050,7 @@ export const questions: Question[] = [
     id: 132,
     domain: 5,
     scenario: 1,
-    taskStatement: "5.2",
+    taskStatement: "5.2: Escalation and ambiguity resolution",
     question: "A customer explicitly says 'I want to speak with a human manager.' The AI support agent has a 95% confidence it can resolve the issue. What should the agent do?",
     options: [
       { label: "A", text: "Attempt resolution first since it has high confidence, then escalate if the customer asks again" },
@@ -2065,7 +2065,7 @@ export const questions: Question[] = [
     id: 133,
     domain: 5,
     scenario: 1,
-    taskStatement: "5.2",
+    taskStatement: "5.2: Escalation and ambiguity resolution",
     question: "A support agent encounters a refund request that falls outside documented policy: the customer wants a refund on a customized item, but the policy only addresses standard items. What is the appropriate action?",
     options: [
       { label: "A", text: "Deny the refund since it's not covered by policy" },
@@ -2080,7 +2080,7 @@ export const questions: Question[] = [
     id: 134,
     domain: 5,
     scenario: 1,
-    taskStatement: "5.2",
+    taskStatement: "5.2: Escalation and ambiguity resolution",
     question: "A customer calls about 'order 12345' but the lookup returns two orders with similar numbers: #12345 (placed January) and #12345-B (placed March). What should the agent do?",
     options: [
       { label: "A", text: "Default to the most recent order (#12345-B) since it's likely the one they're asking about" },
@@ -2095,7 +2095,7 @@ export const questions: Question[] = [
     id: 135,
     domain: 5,
     scenario: 1,
-    taskStatement: "5.2",
+    taskStatement: "5.2: Escalation and ambiguity resolution",
     question: "A team member suggests using sentiment analysis to trigger escalation: when the customer's sentiment score drops below a threshold, automatically escalate. Is this reliable?",
     options: [
       { label: "A", text: "Yes, sentiment analysis accurately detects frustrated customers who need human attention" },
@@ -2110,7 +2110,7 @@ export const questions: Question[] = [
     id: 136,
     domain: 5,
     scenario: 3,
-    taskStatement: "5.3",
+    taskStatement: "5.3: Error propagation",
     question: "The web search subagent returns an error: 'API rate limit exceeded.' The coordinator agent receives this error. What should it propagate to the synthesis agent?",
     options: [
       { label: "A", text: "Nothing; suppress the error and work with available results" },
@@ -2125,7 +2125,7 @@ export const questions: Question[] = [
     id: 137,
     domain: 5,
     scenario: 3,
-    taskStatement: "5.3",
+    taskStatement: "5.3: Error propagation",
     question: "The document analysis subagent queries an internal knowledge base and receives zero results for a specific topic. How should this be communicated to the coordinator?",
     options: [
       { label: "A", text: "Report 'No information available on this topic'" },
@@ -2140,7 +2140,7 @@ export const questions: Question[] = [
     id: 138,
     domain: 5,
     scenario: 3,
-    taskStatement: "5.3",
+    taskStatement: "5.3: Error propagation",
     question: "In a multi-agent research system, the web search subagent fails. The coordinator agent terminates the entire research task. Is this the correct behavior?",
     options: [
       { label: "A", text: "Yes, if one subagent fails, the results cannot be complete" },
@@ -2155,7 +2155,7 @@ export const questions: Question[] = [
     id: 139,
     domain: 5,
     scenario: 4,
-    taskStatement: "5.4",
+    taskStatement: "5.4: Codebase exploration",
     question: "A developer has been exploring a large legacy codebase with Claude Code for 2 hours. They notice Claude's responses are becoming less accurate and it's 'forgetting' findings from early in the session. What is happening?",
     options: [
       { label: "A", text: "The model is experiencing fatigue from prolonged use" },
@@ -2170,7 +2170,7 @@ export const questions: Question[] = [
     id: 140,
     domain: 5,
     scenario: 4,
-    taskStatement: "5.4",
+    taskStatement: "5.4: Codebase exploration",
     question: "During a long codebase exploration session, a developer wants to preserve key findings so they aren't lost as context fills up. What technique is recommended?",
     options: [
       { label: "A", text: "Copy findings into a separate document manually" },
@@ -2185,7 +2185,7 @@ export const questions: Question[] = [
     id: 141,
     domain: 5,
     scenario: 4,
-    taskStatement: "5.4",
+    taskStatement: "5.4: Codebase exploration",
     question: "A developer is exploring a codebase and wants to delegate investigation of a specific subsystem without polluting their main conversation context. What should they use?",
     options: [
       { label: "A", text: "A new terminal window with a separate Claude session" },
@@ -2200,7 +2200,7 @@ export const questions: Question[] = [
     id: 142,
     domain: 5,
     scenario: 4,
-    taskStatement: "5.4",
+    taskStatement: "5.4: Codebase exploration",
     question: "A developer's Claude Code session crashes during a complex multi-file refactoring. They had identified 8 files that needed changes and completed 5 of them. What practice would have helped them recover?",
     options: [
       { label: "A", text: "Making smaller, more frequent git commits" },
@@ -2215,7 +2215,7 @@ export const questions: Question[] = [
     id: 143,
     domain: 5,
     scenario: 4,
-    taskStatement: "5.4",
+    taskStatement: "5.4: Codebase exploration",
     question: "A developer's Claude Code session has become slow and responses are degrading after extensive codebase exploration. What command should they use to reduce context size while preserving key information?",
     options: [
       { label: "A", text: "/reset to start a completely fresh session" },
@@ -2230,7 +2230,7 @@ export const questions: Question[] = [
     id: 144,
     domain: 5,
     scenario: 6,
-    taskStatement: "5.5",
+    taskStatement: "5.5: Human review and confidence calibration",
     question: "An extraction system reports 95% aggregate accuracy across all document types. However, when the team examines performance on handwritten invoices specifically, accuracy drops to 60%. What does this reveal about aggregate metrics?",
     options: [
       { label: "A", text: "The 95% accuracy is incorrect and should be recalculated" },
@@ -2245,7 +2245,7 @@ export const questions: Question[] = [
     id: 145,
     domain: 5,
     scenario: 6,
-    taskStatement: "5.5",
+    taskStatement: "5.5: Human review and confidence calibration",
     question: "A data extraction system provides field-level confidence scores (e.g., 'vendor_name: 0.95, tax_amount: 0.45'). How should these scores be used in a human review workflow?",
     options: [
       { label: "A", text: "Only display the highest confidence fields to speed up human review" },
@@ -2260,7 +2260,7 @@ export const questions: Question[] = [
     id: 146,
     domain: 5,
     scenario: 6,
-    taskStatement: "5.5",
+    taskStatement: "5.5: Human review and confidence calibration",
     question: "A team deploys confidence scores for their extraction system, but reviewers notice that items marked '0.9 confidence' are correct only 70% of the time. What is the problem and solution?",
     options: [
       { label: "A", text: "The model is overconfident; lower all scores by 20%" },
@@ -2275,7 +2275,7 @@ export const questions: Question[] = [
     id: 147,
     domain: 5,
     scenario: 3,
-    taskStatement: "5.6",
+    taskStatement: "5.6: Information provenance",
     question: "A research synthesis agent combines information from multiple sources. The web search subagent finds that 'Market X grew 15% in 2025' while the document analysis subagent finds a report stating 'Market X grew 8% in 2025.' How should the synthesis agent handle this conflict?",
     options: [
       { label: "A", text: "Use the higher figure since it likely represents a more optimistic forecast" },
@@ -2290,7 +2290,7 @@ export const questions: Question[] = [
     id: 148,
     domain: 5,
     scenario: 3,
-    taskStatement: "5.6",
+    taskStatement: "5.6: Information provenance",
     question: "A research agent synthesizes findings into a report. The team wants every claim in the report to be traceable to its source. What structure should the synthesis output maintain?",
     options: [
       { label: "A", text: "A bibliography at the end of the report" },
@@ -2305,7 +2305,7 @@ export const questions: Question[] = [
     id: 149,
     domain: 5,
     scenario: 3,
-    taskStatement: "5.6",
+    taskStatement: "5.6: Information provenance",
     question: "A research agent finds statistical data from multiple sources but none of the sources include publication dates. The team uses this data in a market analysis. What risk does this introduce?",
     options: [
       { label: "A", text: "No risk, as statistical data doesn't change significantly over time" },
@@ -2320,7 +2320,7 @@ export const questions: Question[] = [
     id: 150,
     domain: 5,
     scenario: 3,
-    taskStatement: "5.6",
+    taskStatement: "5.6: Information provenance",
     question: "A multi-agent research system needs to pass findings between subagents. What intermediate data structure best preserves information provenance?",
     options: [
       { label: "A", text: "Plain text summaries passed between agents" },
@@ -2335,7 +2335,7 @@ export const questions: Question[] = [
     id: 151,
     domain: 5,
     scenario: 6,
-    taskStatement: "5.4",
+    taskStatement: "5.4: Codebase exploration",
     question: "Your extraction system sends the same long policy document in every request. Costs are high and latency is increasing. Which change best leverages prompt caching safely?",
     options: [
       { label: "A", text: "Keep the stable policy block unchanged across requests and cache it, while putting per-document dynamic content after the cached prefix." },
@@ -2350,7 +2350,7 @@ export const questions: Question[] = [
     id: 152,
     domain: 4,
     scenario: 6,
-    taskStatement: "4.5",
+    taskStatement: "4.5: Batch processing",
     question: "A product team wants invoice extraction results to appear incrementally in the UI. Which API behavior should the implementation rely on?",
     options: [
       { label: "A", text: "Wait for the final response body and then split it into chunks on the client." },
@@ -2365,7 +2365,7 @@ export const questions: Question[] = [
     id: 153,
     domain: 5,
     scenario: 4,
-    taskStatement: "5.4",
+    taskStatement: "5.4: Codebase exploration",
     question: "A developer enables extended thinking for difficult debugging tasks and then logs every model block into analytics. What is the key reliability and governance risk?",
     options: [
       { label: "A", text: "No risk, because all thinking blocks are guaranteed to be safe to expose externally." },
@@ -2380,7 +2380,7 @@ export const questions: Question[] = [
     id: 154,
     domain: 4,
     scenario: 3,
-    taskStatement: "4.6",
+    taskStatement: "4.6: Multi-instance review",
     question: "Your research agent must generate a report where each claim is directly verifiable from source documents. Which output requirement best enforces this?",
     options: [
       { label: "A", text: "Require a bibliography section at the end of the report." },
@@ -2395,7 +2395,7 @@ export const questions: Question[] = [
     id: 155,
     domain: 5,
     scenario: 3,
-    taskStatement: "5.5",
+    taskStatement: "5.5: Human review and confidence calibration",
     question: "A retrieval pipeline currently uses only semantic embeddings and misses exact identifier lookups (for example, error code E-7412). Which improvement is most appropriate?",
     options: [
       { label: "A", text: "Switch entirely to keyword search and remove embeddings." },
@@ -2410,7 +2410,7 @@ export const questions: Question[] = [
     id: 156,
     domain: 5,
     scenario: 6,
-    taskStatement: "5.5",
+    taskStatement: "5.5: Human review and confidence calibration",
     question: "An extraction assistant misses invoice totals because key-value pairs are split across chunk boundaries. What chunking adjustment is most likely to improve reliability?",
     options: [
       { label: "A", text: "Use slightly smaller chunks with intentional overlap so boundary-spanning fields remain visible in at least one chunk." },
@@ -2425,7 +2425,7 @@ export const questions: Question[] = [
     id: 157,
     domain: 2,
     scenario: 4,
-    taskStatement: "2.4",
+    taskStatement: "2.4: Integrate MCP servers",
     question: "Your team built an MCP server for internal docs with tools, resources, and prompts. The app needs an always-up-to-date document list to render a picker before model inference. Which MCP primitive should provide that list?",
     options: [
       { label: "A", text: "Tool, because tools are the primary way to fetch any data." },
@@ -2440,7 +2440,7 @@ export const questions: Question[] = [
     id: 158,
     domain: 2,
     scenario: 4,
-    taskStatement: "2.4",
+    taskStatement: "2.4: Integrate MCP servers",
     question: "You created a new MCP server and want to quickly verify tool schemas and outputs before wiring it into production workflows. What is the best first step?",
     options: [
       { label: "A", text: "Deploy to production and monitor failures to learn what is broken." },
@@ -2455,7 +2455,7 @@ export const questions: Question[] = [
     id: 159,
     domain: 3,
     scenario: 5,
-    taskStatement: "3.5",
+    taskStatement: "3.5: Iterative prompt refinement",
     question: "A team uses Claude Code hooks to enforce policy checks. They want to block writes to migration files but still run formatting checks after successful edits. Which setup is correct?",
     options: [
       { label: "A", text: "Use PostToolUse to block migration writes, because post hooks can stop already-run operations." },
@@ -2470,7 +2470,7 @@ export const questions: Question[] = [
     id: 160,
     domain: 3,
     scenario: 5,
-    taskStatement: "3.6",
+    taskStatement: "3.6: CI/CD integration",
     question: "You are automating CI checks with the Claude Code SDK and want the agent to be read-only unless explicitly granted edit capability. Which approach matches the SDK model?",
     options: [
       { label: "A", text: "SDK sessions are write-enabled by default; disable writes by setting temperature to 0." },
@@ -2480,5 +2480,205 @@ export const questions: Question[] = [
     ],
     correctAnswer: "B",
     explanation: "A least-privilege setup is the robust CI pattern: start with read-only capabilities and explicitly allow edits only for workflows that require them. Prompt-only restrictions (option C) are weaker than tool-level controls. Options A and D are incorrect extremes."
+  },
+
+  // ============================================================
+  // DOMAIN 1-5: Additional questions (IDs 161-173)
+  // ============================================================
+
+  {
+    id: 161,
+    domain: 2,
+    scenario: 1,
+    taskStatement: "2.1: Effective tool interfaces",
+    question: "Your customer support system prompt includes the instruction 'always check the customer's order status before proceeding.' The agent has two tools: check_status (a general status tool) and lookup_order (the correct tool for order details). The agent consistently calls check_status instead of lookup_order when handling order queries. What is the most likely root cause?",
+    options: [
+      { label: "A", text: "The check_status tool has a shorter name, making it easier for the model to select." },
+      { label: "B", text: "Keyword-sensitive instructions in the system prompt ('check...status') create an unintended association with the check_status tool, overriding the tool descriptions." },
+      { label: "C", text: "The model randomly selects between tools with similar functionality." },
+      { label: "D", text: "The lookup_order tool has a bug preventing it from being selected." }
+    ],
+    correctAnswer: "B",
+    explanation: "System prompt keywords can create unintended tool associations. The phrase 'check the customer's order status' closely mirrors the check_status tool name, causing the model to preferentially select it. After updating tool descriptions, always review system prompts for conflicts that could override well-written descriptions. Option A is wrong - name length does not drive selection. Option C mischaracterizes model behavior. Option D blames a technical issue when the problem is prompt-tool interaction."
+  },
+  {
+    id: 162,
+    domain: 4,
+    scenario: 5,
+    taskStatement: "4.1: Explicit criteria",
+    question: "A CI code review agent produces accurate security vulnerability warnings but its style violation warnings are 70% false positives. Developers have started ignoring ALL warnings, including legitimate security findings. What is the best immediate action?",
+    options: [
+      { label: "A", text: "Add a confidence threshold to all warnings to reduce noise." },
+      { label: "B", text: "Temporarily disable the style violation category while improving those prompts, so developers can trust the security findings that remain." },
+      { label: "C", text: "Send all warnings to a separate dashboard instead of PR comments." },
+      { label: "D", text: "Reduce the number of files analyzed per review to lower the total warning count." }
+    ],
+    correctAnswer: "B",
+    explanation: "High false positive rates in one category destroy trust in ALL categories. The fix is to temporarily disable the problematic category (style violations) while improving its prompts. This immediately restores trust in the accurate category (security). Confidence thresholds (option A) are unreliable. Moving warnings elsewhere (option C) doesn't fix trust. Reducing scope (option D) misses real issues."
+  },
+  {
+    id: 163,
+    domain: 4,
+    scenario: 5,
+    taskStatement: "4.1: Explicit criteria",
+    question: "A code review agent uses severity levels defined as: 'Critical = very important issues, Major = moderately important, Minor = less important.' Reviewers notice the agent assigns inconsistent severity — the same pattern is 'critical' in one file and 'minor' in another. What is the most effective fix?",
+    options: [
+      { label: "A", text: "Add more adjectives to each level ('Critical = extremely urgent and very important')." },
+      { label: "B", text: "Replace prose severity definitions with concrete code examples showing what each severity level looks like — e.g., a SQL injection example for 'critical' and a missing comment for 'minor'." },
+      { label: "C", text: "Let the model decide severity without definitions and trust its judgment." },
+      { label: "D", text: "Reduce to two levels (high/low) to simplify the decision." }
+    ],
+    correctAnswer: "B",
+    explanation: "Concrete code examples for each severity level eliminate interpretation ambiguity. Showing 'this SQL injection is critical' and 'this missing comment is minor' gives the model clear, testable reference points. More prose adjectives (option A) remain subjective. Removing definitions (option C) makes inconsistency worse. Reducing levels (option D) loses useful granularity without fixing the calibration problem."
+  },
+  {
+    id: 164,
+    domain: 4,
+    scenario: 6,
+    taskStatement: "4.3: Structured output with tool_use",
+    question: "Your extraction schema has an enum field document_type with values ['invoice', 'receipt', 'purchase_order']. When the system encounters a delivery note, the model forces it into 'receipt' even though it's semantically different. What schema design change would handle this?",
+    options: [
+      { label: "A", text: "Add 'delivery_note' to the enum and every other possible document type." },
+      { label: "B", text: "Remove the enum and use a freeform string field instead." },
+      { label: "C", text: "Add an 'other' enum value paired with a freeform document_type_detail string field for extensible categorization." },
+      { label: "D", text: "Make the document_type field nullable so the model can skip it for unknown types." }
+    ],
+    correctAnswer: "C",
+    explanation: "An 'other' enum value with a freeform detail string provides extensibility: known types are categorized precisely, while novel types are captured with context rather than forced into wrong categories. Adding every possible type (option A) is unmaintainable. Pure freeform (option B) loses the structure benefits of enums. Nullable (option D) loses the information entirely instead of capturing it."
+  },
+  {
+    id: 165,
+    domain: 4,
+    scenario: 6,
+    taskStatement: "4.3: Structured output with tool_use",
+    question: "Your extraction pipeline uses strict JSON schemas and produces syntactically valid output. However, date fields appear in inconsistent formats — some as 'MM/DD/YYYY', others as 'DD-MM-YYYY', depending on the source document. What is the best approach to ensure consistent date formatting?",
+    options: [
+      { label: "A", text: "Add regex validation to reject non-ISO dates and retry until the model produces the correct format." },
+      { label: "B", text: "Include explicit format normalization rules in the prompt alongside the strict schema, specifying that all dates must be ISO 8601 (YYYY-MM-DD)." },
+      { label: "C", text: "Use a separate post-processing script that converts all date formats after extraction." },
+      { label: "D", text: "Define the date field as a number (Unix timestamp) to avoid format issues entirely." }
+    ],
+    correctAnswer: "B",
+    explanation: "Format normalization rules in the prompt alongside strict schemas guide the model to produce consistent output. The schema enforces structure while the prompt specifies format conventions. Regex rejection and retry (option A) wastes tokens on a preventable issue. Post-processing (option C) works but is less efficient than getting it right at extraction time. Unix timestamps (option D) lose readability and may confuse the model."
+  },
+  {
+    id: 166,
+    domain: 4,
+    scenario: 6,
+    taskStatement: "4.5: Batch processing",
+    question: "You submit a batch of 5,000 invoice extraction requests using the Message Batches API. When results return, 200 requests have failed — most due to oversized document content exceeding token limits. What is the correct recovery strategy?",
+    options: [
+      { label: "A", text: "Resubmit the entire batch of 5,000 to ensure consistency." },
+      { label: "B", text: "Identify failed requests by custom_id, chunk the oversized documents into smaller segments, and resubmit only the 200 failures with the modified input." },
+      { label: "C", text: "Mark the 200 documents as unprocessable and exclude them from the dataset." },
+      { label: "D", text: "Switch to the synchronous API for all 5,000 documents to avoid batch failures." }
+    ],
+    correctAnswer: "B",
+    explanation: "custom_id enables identifying exactly which requests failed. For oversized documents, chunking into smaller segments addresses the root cause. Resubmitting only failures is efficient. Resubmitting all 5,000 (option A) wastes cost and time on the 4,800 that already succeeded. Excluding documents (option C) loses data unnecessarily. Switching to synchronous (option D) loses the 50% cost savings and doesn't fix the token limit issue."
+  },
+  {
+    id: 167,
+    domain: 5,
+    scenario: 3,
+    taskStatement: "5.1: Context preservation",
+    question: "In your multi-agent research system, the synthesis agent consistently runs out of context budget. Investigation reveals that upstream subagents (web search, document analysis) return verbose reasoning chains alongside their findings — full paragraphs explaining their search strategy, why they rejected certain sources, and their reasoning process. What is the most effective fix?",
+    options: [
+      { label: "A", text: "Increase the synthesis agent's context window to accommodate the verbose output." },
+      { label: "B", text: "Modify upstream agents to return structured data — key facts, citations, and relevance scores — instead of verbose content and reasoning chains." },
+      { label: "C", text: "Have the coordinator truncate subagent responses to the first 500 tokens." },
+      { label: "D", text: "Run the synthesis agent multiple times, each with a subset of the upstream results." }
+    ],
+    correctAnswer: "B",
+    explanation: "Upstream agent optimization means modifying agents to return structured, concise output (key facts, citations, relevance scores) rather than verbose reasoning. This is critical when downstream agents have limited context budgets. Increasing context (option A) delays the problem and increases cost. Arbitrary truncation (option C) risks cutting important findings. Multiple runs (option D) loses the ability to synthesize across all findings."
+  },
+  {
+    id: 168,
+    domain: 5,
+    scenario: 1,
+    taskStatement: "5.2: Escalation and ambiguity resolution",
+    question: "A customer contacts support clearly frustrated, using phrases like 'this is ridiculous' and 'I've been waiting forever.' Their issue is a straightforward order status check that the agent can resolve in one tool call. The agent immediately escalates to a human agent due to the negative sentiment. Is this the correct behavior?",
+    options: [
+      { label: "A", text: "Yes, frustrated customers should always be escalated to preserve the relationship." },
+      { label: "B", text: "No. The agent should acknowledge the frustration, then resolve the straightforward issue. Escalation is only appropriate if the customer explicitly requests a human or reiterates their preference for one after the agent offers help." },
+      { label: "C", text: "Yes, but only after confirming the sentiment score exceeds a 0.8 threshold." },
+      { label: "D", text: "No, the agent should ignore the frustration entirely and respond with just the order status." }
+    ],
+    correctAnswer: "B",
+    explanation: "Sentiment-based escalation is unreliable because frustration does not correlate with case complexity. When the issue is straightforward, the agent should acknowledge the frustration and offer resolution. Escalation should only happen if the customer explicitly requests a human or reiterates their preference after the agent offers help. Always escalating frustrated customers (options A, C) wastes human agent capacity on simple issues. Ignoring frustration (option D) provides poor customer experience."
+  },
+  {
+    id: 169,
+    domain: 5,
+    scenario: 3,
+    taskStatement: "5.3: Error propagation",
+    question: "A multi-agent research system produces a report on renewable energy. The web search subagent found comprehensive data on solar, wind, and biomass, but the document analysis subagent failed to access a journal database containing geothermal research. The synthesis agent produces a report that covers solar, wind, and biomass without mentioning geothermal at all. What is wrong with this approach?",
+    options: [
+      { label: "A", text: "Nothing — the report accurately reflects the data that was successfully gathered." },
+      { label: "B", text: "The synthesis should include a coverage annotation noting the gap: 'Geothermal energy coverage is limited due to unavailable journal access' rather than silently omitting the topic." },
+      { label: "C", text: "The entire report should be discarded since it is incomplete." },
+      { label: "D", text: "The synthesis agent should generate geothermal content from its training data to fill the gap." }
+    ],
+    correctAnswer: "B",
+    explanation: "Coverage annotations are essential for research synthesis integrity. Noting 'Section on geothermal energy is limited due to unavailable journal access' is far better than silently omitting the topic, because it informs the reader about the gap and allows them to seek additional sources. Silent omission (option A) misleads the reader into thinking the report is comprehensive. Discarding (option C) wastes valid partial results. Generating from training data (option D) introduces unverifiable claims."
+  },
+  {
+    id: 170,
+    domain: 5,
+    scenario: 3,
+    taskStatement: "5.6: Information provenance",
+    question: "A research synthesis agent produces a report comparing the GDP growth rates of 10 countries. The report presents all data as flowing prose paragraphs. Stakeholders complain that comparing numbers across countries is difficult. What rendering improvement would best serve this content?",
+    options: [
+      { label: "A", text: "Add bold formatting to the key numbers within the prose." },
+      { label: "B", text: "Use content-appropriate rendering: present the financial comparison data as a structured table rather than prose, while keeping narrative context and analysis as prose." },
+      { label: "C", text: "Convert the entire report to bullet points for scannability." },
+      { label: "D", text: "Add a summary paragraph at the top with all 10 GDP figures." }
+    ],
+    correctAnswer: "B",
+    explanation: "Content-appropriate rendering means matching the output format to the content type: financial comparison data belongs in tables (easy to scan and compare), while narrative analysis works best as prose. Flattening everything into one format (prose, bullets, or otherwise) makes some content harder to consume. Bold formatting (option A) is a minor improvement. Bullet points for everything (option C) loses narrative flow. A summary paragraph (option D) still uses prose for tabular data."
+  },
+  {
+    id: 171,
+    domain: 5,
+    scenario: 3,
+    taskStatement: "5.6: Information provenance",
+    question: "A research agent finds two apparently conflicting statistics: Source A reports 'global AI market size: $50B' and Source B reports 'global AI market size: $75B.' The synthesis agent flags this as a contradiction and asks which source to trust. Upon investigation, Source A collected data in 2023 and Source B in 2025. How should the synthesis handle this?",
+    options: [
+      { label: "A", text: "Select the more recent figure ($75B) as it is more current." },
+      { label: "B", text: "Average the two values and report $62.5B." },
+      { label: "C", text: "Present both values with publication dates, explaining that the difference reflects market growth over time rather than a factual contradiction." },
+      { label: "D", text: "Discard both values since they cannot be reconciled." }
+    ],
+    correctAnswer: "C",
+    explanation: "Temporal awareness is key: different publication dates explain different numbers. Requiring and presenting publication dates turns apparent contradictions into a coherent narrative (market growth from $50B in 2023 to $75B in 2025). Selecting one (option A) loses context. Averaging (option B) produces a meaningless figure. Discarding both (option D) loses valuable trend data."
+  },
+  {
+    id: 172,
+    domain: 1,
+    scenario: 3,
+    taskStatement: "1.3: Subagent invocation/context passing",
+    question: "A coordinator prompts the web search subagent with: 'Step 1: Search for climate change policies. Step 2: Filter results to peer-reviewed sources only. Step 3: Summarize the top 5 results.' The search returns mostly government reports rather than peer-reviewed papers. The subagent filters them all out in Step 2 and returns an empty summary. What is the root cause?",
+    options: [
+      { label: "A", text: "The web search tool is misconfigured and returning wrong result types." },
+      { label: "B", text: "The coordinator prompt uses rigid step-by-step procedures instead of research goals and quality criteria, preventing the subagent from adapting when results don't match expectations." },
+      { label: "C", text: "The subagent needs access to a scholarly search tool instead of a web search tool." },
+      { label: "D", text: "The search query needs more specific keywords to find peer-reviewed sources." }
+    ],
+    correctAnswer: "B",
+    explanation: "Coordinator prompts should specify research goals and quality criteria, NOT step-by-step procedural instructions. A goal-oriented prompt like 'Find authoritative sources on climate change policies, prioritizing peer-reviewed research but including credible government reports' would let the subagent adapt when search results don't match the expected format. Rigid procedures prevent this adaptability. The search tool (option A) and keywords (option D) are not the core issue. A different tool (option C) may help but doesn't fix the prompt design flaw."
+  },
+  {
+    id: 173,
+    domain: 1,
+    scenario: 1,
+    taskStatement: "1.1: Design agentic loops",
+    question: "A developer builds a customer support agent with a hardcoded tool sequence: the code always calls get_customer first, then lookup_order, then process_refund, regardless of the customer's actual request. A customer asks 'What are your return policy hours?' — the agent unnecessarily looks up their account and order history before answering. What is the fundamental design problem?",
+    options: [
+      { label: "A", text: "The agent needs more tools to handle policy questions." },
+      { label: "B", text: "The developer used a pre-configured decision tree instead of model-driven decision-making. The model should reason about which tools to call based on context, not follow a fixed sequence for every request." },
+      { label: "C", text: "The agent should have a separate pipeline for policy questions." },
+      { label: "D", text: "The tool descriptions need to be updated to clarify when each tool should be used." }
+    ],
+    correctAnswer: "B",
+    explanation: "The distinction between model-driven decision-making and pre-configured decision trees is fundamental. Model-driven approaches let Claude reason about which tool to call based on context — for a policy question, no tools may be needed at all. Pre-configured sequences waste resources on unnecessary steps and cannot adapt to varied requests. More tools (option A) don't fix the rigid sequence. Separate pipelines (option C) over-engineer the solution. Better descriptions (option D) help but don't fix hardcoded sequencing."
   },
 ];

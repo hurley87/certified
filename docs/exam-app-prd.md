@@ -6,7 +6,7 @@
 
 | # | Decision | Resolution | Rationale |
 |---|----------|------------|-----------|
-| 1 | Question bank | 151 questions exist in `src/data/questions.ts`. Short task statement codes (e.g., "3.1") are acceptable — not displayed in UI. | Data layer is complete; no generation needed. |
+| 1 | Question bank | 160 questions exist in `src/data/questions.ts`. Short task statement codes (e.g., "3.1") are acceptable — not displayed in UI. | Data layer is complete; targeted expansion improved topic coverage. |
 | 2 | State management | React context only (no localStorage). | Keeps it simple. If a database is added later, context still handles client-side UI state while the DB handles persistence — no rework needed. |
 | 3 | Scenario selection | Draw from all 6 scenarios per exam. | Practice tool prioritizes content coverage over exam simulation fidelity. |
 | 4 | Timer | None. `timeSpent` removed from types. | Learning tool — immediate feedback matters more than time pressure. |
@@ -440,7 +440,7 @@ Each scenario below is an independently verifiable user flow for Ranger browser 
 - **UI:** React 19 + Tailwind CSS v4
 - **Language:** TypeScript (strict mode)
 - **State Management:** React context (ExamContext provider at layout level). No localStorage.
-- **Data:** Static TypeScript file (`src/data/questions.ts`) - no database. 151 questions.
+- **Data:** Static TypeScript file (`src/data/questions.ts`) - no database. 160 questions.
 - **Types:** Shared types in `src/lib/types.ts`, exam logic in `src/lib/exam.ts`
 - **Routing:** Next.js App Router (`/`, `/exam`, `/exam/results`). `/exam` doubles as review mode via context flag.
 - **Path aliases:** `@/*` mapped to `./src/*`
@@ -469,7 +469,7 @@ src/
 │   ├── constants.ts      # DOMAINS, SCENARIOS arrays
 │   └── exam.ts           # generateExam(), shuffleOptions(), calculateScore()
 ├── data/
-│   └── questions.ts      # 151 questions (existing)
+│   └── questions.ts      # 160 questions (existing)
 ├── context/
 │   └── ExamContext.tsx    # React context provider + useExam hook
 └── app/

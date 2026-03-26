@@ -1037,15 +1037,15 @@ export const questions: Question[] = [
     domain: 2,
     scenario: 5,
     taskStatement: "2.4: Integrate MCP servers",
-    question: "Your CI system needs MCP access to a Jira server for creating issues from code review findings. The Jira credentials differ between staging and production environments. How should the .mcp.json handle this?",
+    question: "Your CI system needs MCP access to a Jira server for creating issues from code review findings. The Jira credentials differ between staging and production environments. How should the .mcp.json handle this safely?",
     options: [
       { label: "A", text: "Create two separate .mcp.json files: .mcp.staging.json and .mcp.production.json." },
-      { label: "B", text: "Use environment variable expansion in .mcp.json (e.g., ${JIRA_API_TOKEN}) and set different values for the environment variable in staging vs. production CI configurations." },
+      { label: "B", text: "Use environment variable expansion in .mcp.json (for example, ${JIRA_API_TOKEN}, or ${JIRA_HOST:-https://jira.example.com}) and set environment-specific values in CI." },
       { label: "C", text: "Hardcode the staging credentials and manually change them for production deployments." },
       { label: "D", text: "Store both sets of credentials in .mcp.json with if/else logic." }
     ],
     correctAnswer: "B",
-    explanation: "Environment variable expansion is the designed solution for environment-specific credentials. A single .mcp.json uses ${JIRA_API_TOKEN}, and the CI system sets different values for that variable in staging vs. production. This keeps credentials out of the repository and supports multiple environments with one configuration file. Option A requires maintaining duplicate configuration files. Option C hardcodes secrets in version control. Option D is not supported syntax in .mcp.json."
+    explanation: "Environment variable expansion in .mcp.json is the intended pattern for environment-specific secrets and endpoints. Keep one shared config file and inject values from each environment's CI secret store. Defaults like ${VAR:-default} are useful for non-secret values, while required secrets should be set explicitly. Option A adds unnecessary config drift, option C hardcodes secrets, and option D is unsupported config logic."
   },
 
   // --- Additional 2.5 questions ---
@@ -1081,9 +1081,9 @@ export const questions: Question[] = [
   },
 
   // ============================================================
-  // DOMAIN 3: Claude Code Configuration & Workflows (30 questions)
-  // DOMAIN 4: Prompt Engineering & Structured Output (27 questions)
-  // DOMAIN 5: Context Management & Reliability (26 questions)
+  // DOMAIN 3: Claude Code Configuration & Workflows
+  // DOMAIN 4: Prompt Engineering & Structured Output
+  // DOMAIN 5: Context Management & Reliability
   // ============================================================
 
   {
@@ -1099,7 +1099,7 @@ export const questions: Question[] = [
       { label: "D", text: "In a shared .claude/commands/ directory committed to git" }
     ],
     correctAnswer: "B",
-    explanation: "~/.claude/CLAUDE.md is the user-level configuration that applies to all projects for that specific user. It is not committed to version control, so it won't affect teammates. Project-level CLAUDE.md (option A) would affect all team members. .claude/rules/ (option C) is for path-specific rules within a project. .claude/commands/ (option D) is for custom slash commands, not configuration preferences."
+    explanation: "~/.claude/CLAUDE.md is user-level memory and applies across that user's projects without affecting teammates. Project-level CLAUDE.md (option A) is shared by the repository. .claude/rules/ (option C) is not where CLAUDE.md memory belongs, and .claude/commands/ (option D) defines command workflows rather than persistent style guidance."
   },
   {
     id: 69,
@@ -2221,10 +2221,10 @@ export const questions: Question[] = [
       { label: "A", text: "/reset to start a completely fresh session" },
       { label: "B", text: "/compact to reduce context while preserving important information" },
       { label: "C", text: "/clear to delete conversation history" },
-      { label: "D", text: "/summarize to generate a session summary" }
+      { label: "D", text: "Start a brand-new session and manually copy notes over" }
     ],
     correctAnswer: "B",
-    explanation: "/compact is specifically designed to reduce context size while preserving important information from the session. It compresses the conversation without losing key findings. /reset (option A) would lose everything. /clear (option C) would delete history without preservation. /summarize (option D) is not a standard Claude Code command for this purpose."
+    explanation: "/compact is specifically designed to reduce context while preserving important information. /clear drops conversation history without preserving it, and starting a new session manually (option D) is slower and easier to get wrong. The goal here is preserving useful context while shrinking token load, which is exactly what /compact is for."
   },
   {
     id: 144,
@@ -2330,5 +2330,155 @@ export const questions: Question[] = [
     ],
     correctAnswer: "B",
     explanation: "Structured intermediates with claim, evidence, source, and confidence fields preserve full provenance as data moves between agents. Plain text (option A) loses structure and provenance. URL lists (option C) don't capture extracted claims or evidence. Vector databases (option D) are useful for retrieval but don't inherently maintain claim-level provenance."
+  },
+  {
+    id: 151,
+    domain: 5,
+    scenario: 6,
+    taskStatement: "5.4",
+    question: "Your extraction system sends the same long policy document in every request. Costs are high and latency is increasing. Which change best leverages prompt caching safely?",
+    options: [
+      { label: "A", text: "Keep the stable policy block unchanged across requests and cache it, while putting per-document dynamic content after the cached prefix." },
+      { label: "B", text: "Randomize examples in the policy block to improve model variety and cache hit rates." },
+      { label: "C", text: "Embed the policy into each user message so the model always re-reads it." },
+      { label: "D", text: "Disable caching and switch to a larger model with more context." }
+    ],
+    correctAnswer: "A",
+    explanation: "Prompt caching works best when a stable prefix is reused exactly across requests. Put static instructions and long policy references in that stable prefix, and append dynamic per-document content after it. Randomizing the prefix (option B) reduces cache hits. Repeating large policy text in each user turn (option C) increases cost. Option D avoids the optimization entirely."
+  },
+  {
+    id: 152,
+    domain: 4,
+    scenario: 6,
+    taskStatement: "4.5",
+    question: "A product team wants invoice extraction results to appear incrementally in the UI. Which API behavior should the implementation rely on?",
+    options: [
+      { label: "A", text: "Wait for the final response body and then split it into chunks on the client." },
+      { label: "B", text: "Use streaming responses and process incremental content deltas as they arrive, then persist the finalized message when the stream closes." },
+      { label: "C", text: "Poll the API every second until the full response is ready." },
+      { label: "D", text: "Use temperature 0 so responses arrive faster." }
+    ],
+    correctAnswer: "B",
+    explanation: "Streaming is designed for incremental UX: render deltas as they arrive and store the final assembled response at stream completion. Client-side chunk splitting (option A) is fake streaming because users still wait for full completion. Polling (option C) is unnecessary overhead. Temperature settings (option D) influence randomness, not transport behavior."
+  },
+  {
+    id: 153,
+    domain: 5,
+    scenario: 4,
+    taskStatement: "5.4",
+    question: "A developer enables extended thinking for difficult debugging tasks and then logs every model block into analytics. What is the key reliability and governance risk?",
+    options: [
+      { label: "A", text: "No risk, because all thinking blocks are guaranteed to be safe to expose externally." },
+      { label: "B", text: "The model may refuse to provide final answers when thinking is enabled." },
+      { label: "C", text: "Internal reasoning content can be sensitive and should be handled carefully; production logs should focus on required outputs and minimal metadata." },
+      { label: "D", text: "Extended thinking only works in offline mode, so logs are irrelevant." }
+    ],
+    correctAnswer: "C",
+    explanation: "When advanced reasoning features are enabled, teams should treat internal reasoning artifacts conservatively and avoid broad external exposure. Production observability should track what is needed for quality and debugging without indiscriminate logging of internal reasoning traces. Option A is an unsafe assumption. Options B and D are incorrect product claims."
+  },
+  {
+    id: 154,
+    domain: 4,
+    scenario: 3,
+    taskStatement: "4.6",
+    question: "Your research agent must generate a report where each claim is directly verifiable from source documents. Which output requirement best enforces this?",
+    options: [
+      { label: "A", text: "Require a bibliography section at the end of the report." },
+      { label: "B", text: "Ask for a persuasive writing style and concise tone." },
+      { label: "C", text: "Require claim-level citations in the output schema so each assertion maps to supporting source passages." },
+      { label: "D", text: "Ask the model to avoid uncertainty and provide the best single answer." }
+    ],
+    correctAnswer: "C",
+    explanation: "Claim-level citation requirements enforce traceability and make downstream verification straightforward. A bibliography alone (option A) does not link specific claims to specific evidence. Writing-style constraints (option B) and confidence language constraints (option D) do not solve provenance."
+  },
+  {
+    id: 155,
+    domain: 5,
+    scenario: 3,
+    taskStatement: "5.5",
+    question: "A retrieval pipeline currently uses only semantic embeddings and misses exact identifier lookups (for example, error code E-7412). Which improvement is most appropriate?",
+    options: [
+      { label: "A", text: "Switch entirely to keyword search and remove embeddings." },
+      { label: "B", text: "Use a hybrid retrieval approach that combines lexical search (for exact tokens) with semantic retrieval, then rerank." },
+      { label: "C", text: "Increase temperature so the model can infer missing identifiers." },
+      { label: "D", text: "Store fewer documents to reduce retrieval complexity." }
+    ],
+    correctAnswer: "B",
+    explanation: "Hybrid retrieval addresses complementary failure modes: lexical methods catch exact tokens and IDs, while semantic methods capture conceptual similarity. Combining both and reranking typically improves recall and precision. Option A loses semantic recall, option C is unrelated to retrieval quality, and option D reduces coverage."
+  },
+  {
+    id: 156,
+    domain: 5,
+    scenario: 6,
+    taskStatement: "5.5",
+    question: "An extraction assistant misses invoice totals because key-value pairs are split across chunk boundaries. What chunking adjustment is most likely to improve reliability?",
+    options: [
+      { label: "A", text: "Use slightly smaller chunks with intentional overlap so boundary-spanning fields remain visible in at least one chunk." },
+      { label: "B", text: "Remove chunking and pass every document in full on every request." },
+      { label: "C", text: "Use random chunk boundaries to diversify retrieval." },
+      { label: "D", text: "Increase top-k retrieval without changing chunk strategy." }
+    ],
+    correctAnswer: "A",
+    explanation: "Boundary errors are commonly improved by overlap-aware chunking, which keeps adjacent context available when fields span boundaries. Sending full documents every turn (option B) hurts cost and latency. Random boundaries (option C) make consistency worse. Raising top-k alone (option D) does not fix broken segmentation."
+  },
+  {
+    id: 157,
+    domain: 2,
+    scenario: 4,
+    taskStatement: "2.4: Integrate MCP servers",
+    question: "Your team built an MCP server for internal docs with tools, resources, and prompts. The app needs an always-up-to-date document list to render a picker before model inference. Which MCP primitive should provide that list?",
+    options: [
+      { label: "A", text: "Tool, because tools are the primary way to fetch any data." },
+      { label: "B", text: "Prompt, because prompts are reusable and parameterized." },
+      { label: "C", text: "Resource, because application-controlled data fetching is the right fit for pre-inference UI hydration." },
+      { label: "D", text: "Task, because subagents should own the document picker state." }
+    ],
+    correctAnswer: "C",
+    explanation: "Resources are appropriate when application code needs to fetch data directly (for example, populating a UI picker) before or outside model tool invocation. Tools are model-invoked actions, and prompts are predefined instruction templates. Option D is unrelated to MCP primitives."
+  },
+  {
+    id: 158,
+    domain: 2,
+    scenario: 4,
+    taskStatement: "2.4: Integrate MCP servers",
+    question: "You created a new MCP server and want to quickly verify tool schemas and outputs before wiring it into production workflows. What is the best first step?",
+    options: [
+      { label: "A", text: "Deploy to production and monitor failures to learn what is broken." },
+      { label: "B", text: "Use an MCP inspector/dev workflow to connect to the server directly and manually run representative tool calls." },
+      { label: "C", text: "Skip direct testing and rely on model behavior to adapt to schema issues." },
+      { label: "D", text: "Only test with one happy-path input because schema validation already proves correctness." }
+    ],
+    correctAnswer: "B",
+    explanation: "Direct inspection and manual invocation is the fastest way to catch schema mismatches, missing fields, and runtime errors before integration. Option A is risky, option C assumes robustness that usually does not exist, and option D ignores edge cases."
+  },
+  {
+    id: 159,
+    domain: 3,
+    scenario: 5,
+    taskStatement: "3.5",
+    question: "A team uses Claude Code hooks to enforce policy checks. They want to block writes to migration files but still run formatting checks after successful edits. Which setup is correct?",
+    options: [
+      { label: "A", text: "Use PostToolUse to block migration writes, because post hooks can stop already-run operations." },
+      { label: "B", text: "Use PreToolUse for blocking protected writes, and PostToolUse for non-blocking feedback actions such as formatting or type checks." },
+      { label: "C", text: "Use only PostToolUse hooks for both blocking and feedback to simplify configuration." },
+      { label: "D", text: "Avoid hooks and rely on prompt instructions; enforcement should never be automated." }
+    ],
+    correctAnswer: "B",
+    explanation: "Blocking must happen before the tool executes, which is what PreToolUse is for. PostToolUse is appropriate for feedback and follow-up checks after actions complete. Option A and C misuse post hooks for blocking. Option D gives up deterministic guardrails."
+  },
+  {
+    id: 160,
+    domain: 3,
+    scenario: 5,
+    taskStatement: "3.6",
+    question: "You are automating CI checks with the Claude Code SDK and want the agent to be read-only unless explicitly granted edit capability. Which approach matches the SDK model?",
+    options: [
+      { label: "A", text: "SDK sessions are write-enabled by default; disable writes by setting temperature to 0." },
+      { label: "B", text: "Default to read-only behavior and explicitly allow write-capable tools through the tool allowlist only when needed." },
+      { label: "C", text: "Allow all tools and rely on a system prompt that asks the model not to edit files." },
+      { label: "D", text: "Disable tool use entirely; SDK automation should be text-only for CI." }
+    ],
+    correctAnswer: "B",
+    explanation: "A least-privilege setup is the robust CI pattern: start with read-only capabilities and explicitly allow edits only for workflows that require them. Prompt-only restrictions (option C) are weaker than tool-level controls. Options A and D are incorrect extremes."
   },
 ];

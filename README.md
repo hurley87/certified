@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CCA-F Practice Exam
+
+A practice exam app for the **Claude Certified Architect - Foundations (CCA-F)** certification. Generates unique exams from a 160-question bank across all 5 exam domains, with immediate feedback and explanations after every answer.
+
+## Features
+
+- **Randomized exams** — 30 or 60 questions drawn from 6 scenario categories, shuffled each attempt
+- **Immediate feedback** — see correct/incorrect with detailed explanations after every answer
+- **Domain scoring** — performance breakdown across all 5 weighted domains
+- **Pass/fail determination** — scaled scoring with the official 720/1000 threshold
+- **Review mode** — revisit all questions and explanations after completing an exam
+- **Countdown timer** — optional timed mode for exam simulation
+- **Dark mode** — automatic via `prefers-color-scheme`
+
+## Exam Domains
+
+| Domain | Weight |
+|--------|--------|
+| Agentic Architecture & Orchestration | 27% |
+| Tool Design & MCP Integration | 18% |
+| Claude Code Configuration & Workflows | 20% |
+| Prompt Engineering & Structured Output | 20% |
+| Context Management & Reliability | 15% |
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Production build |
+| `npm run start` | Start production server |
+| `npm run test` | Run exam engine tests |
+| `npm run lint` | Run ESLint |
 
-## Learn More
+## Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Next.js](https://nextjs.org) 16 (App Router)
+- React 19
+- Tailwind CSS 4
+- TypeScript

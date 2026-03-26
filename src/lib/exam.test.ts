@@ -1,69 +1,117 @@
+import assert from "node:assert/strict";
+
 import { questions } from "../data/questions";
 import { generateExam, calculateScore } from "./exam";
+import { DOMAINS, SCENARIOS } from "./constants";
 
-// Test generateExam with 30 questions
-const exam = generateExam(30, questions);
-console.log("Generated exam:", exam.length, "questions");
-
-// Check no duplicates
-const ids = exam.map((q) => q.id);
-const unique = new Set(ids);
-console.log("Unique IDs:", unique.size, "=== 30?", unique.size === 30);
-
-// Check domain distribution
-const domainCounts: Record<number, number> = {};
-for (const q of exam) {
-  domainCounts[q.domain] = (domainCounts[q.domain] || 0) + 1;
-}
-console.log("Domain distribution:", domainCounts);
-
-// Check answer shuffling - verify correctAnswer still points to the right text
-const sourceQ = questions[0];
-const examQ = exam.find((q) => q.id === sourceQ.id);
-if (examQ) {
-  const sourceCorrectText = sourceQ.options.find((o) => o.label === sourceQ.correctAnswer)?.text;
-  const examCorrectText = examQ.options.find((o) => o.label === examQ.correctAnswer)?.text;
-  console.log("Correct answer text match:", sourceCorrectText === examCorrectText);
+function countBy<T extends string | number>(values: T[]): Record<string, number> {
+  return values.reduce<Record<string, number>>((acc, value) => {
+    acc[String(value)] = (acc[String(value)] ?? 0) + 1;
+    return acc;
+  }, {});
 }
 
-// Test calculateScore
-const answers = exam.map((q, i) => ({
-  questionId: q.id,
-  selectedAnswer: i < 22 ? q.correctAnswer : ("A" as const),
-  isCorrect: i < 22,
-}));
-const score = calculateScore(exam, answers);
-console.log("Score:", {
-  raw: score.rawScore.toFixed(1),
-  scaled: score.scaledScore,
-  passed: score.passed,
-});
-console.log(
-  "Domain results:",
-  score.domainResults.map((d) => `${d.domainName}: ${d.correctAnswers}/${d.totalQuestions}`)
-);
+function validateQuestionBank(): void {
+  assert.ok(questions.length >= 150, "Question bank must contain at least 150 questions");
 
-// Test "All" mode
-const allExam = generateExam(999, questions);
-console.log("All questions exam:", allExam.length, "=== total?", allExam.length === questions.length);
+  const ids = questions.map((q) => q.id);
+  assert.equal(new Set(ids).size, ids.length, "Question IDs must be unique");
+  assert.equal(Math.min(...ids), 1, "Question IDs should start at 1");
+  assert.equal(Math.max(...ids), ids.length, "Question IDs should be contiguous");
 
-// Test 15 questions
-const small = generateExam(15, questions);
-console.log("15-question exam:", small.length);
+  for (const question of questions) {
+    assert.equal(
+      question.options.length,
+      4,
+      `Question ${question.id} must have exactly 4 options`
+    );
+    assert.deepEqual(
+      question.options.map((o) => o.label).sort(),
+      ["A", "B", "C", "D"],
+      `Question ${question.id} must include labels A-D exactly once`
+    );
+    assert.ok(
+      question.options.some((o) => o.label === question.correctAnswer),
+      `Question ${question.id} has invalid correctAnswer`
+    );
+    assert.ok(
+      question.explanation.trim().length > 30,
+      `Question ${question.id} explanation appears too short`
+    );
+  }
 
-// Edge case: 0% and 100%
-const zeroAnswers = exam.map((q) => ({
-  questionId: q.id,
-  selectedAnswer: null,
-  isCorrect: false,
-}));
-const zeroScore = calculateScore(exam, zeroAnswers);
-console.log("0% score:", zeroScore.scaledScore, "=== 100?", zeroScore.scaledScore === 100);
+  const domainCounts = countBy(questions.map((q) => q.domain));
+  const domainMinimums: Record<number, number> = { 1: 40, 2: 27, 3: 30, 4: 30, 5: 23 };
+  for (const domain of DOMAINS) {
+    const minRequired = domainMinimums[domain.id];
+    assert.ok(minRequired !== undefined, `Missing minimum for domain ${domain.id}`);
+    const count = domainCounts[String(domain.id)] ?? 0;
+    assert.ok(
+      count >= minRequired,
+      `Domain ${domain.id} (${domain.name}) must contain at least ${minRequired} questions, found ${count}`
+    );
+  }
 
-const perfectAnswers = exam.map((q) => ({
-  questionId: q.id,
-  selectedAnswer: q.correctAnswer,
-  isCorrect: true,
-}));
-const perfectScore = calculateScore(exam, perfectAnswers);
-console.log("100% score:", perfectScore.scaledScore, "=== 1000?", perfectScore.scaledScore === 1000);
+  const scenarioCounts = countBy(questions.map((q) => q.scenario));
+  for (const scenario of SCENARIOS) {
+    assert.ok(
+      (scenarioCounts[String(scenario.id)] ?? 0) > 0,
+      `Scenario ${scenario.id} (${scenario.name}) must be represented in the question bank`
+    );
+  }
+
+  const taskCounts = countBy(questions.map((q) => q.taskStatement));
+  assert.equal(Object.keys(taskCounts).length, 30, "Expected exactly 30 task statements");
+  for (const [task, taskCount] of Object.entries(taskCounts)) {
+    assert.ok(taskCount >= 2, `Task statement "${task}" must have at least 2 questions`);
+  }
+
+  const keyDistribution = countBy(questions.map((q) => q.correctAnswer));
+  const maxCount = Math.max(...Object.values(keyDistribution));
+  const minCount = Math.min(...Object.values(keyDistribution));
+  const skewRatio = minCount === 0 ? Number.POSITIVE_INFINITY : maxCount / minCount;
+  if (skewRatio > 3) {
+    console.warn(
+      `Warning: source answer-key distribution is imbalanced (${JSON.stringify(
+        keyDistribution
+      )}).`
+    );
+  }
+}
+
+function testExamGenerationAndScoring(): void {
+  const exam30 = generateExam(30, questions);
+  assert.equal(exam30.length, 30, "30-question exam should contain 30 questions");
+  assert.equal(
+    new Set(exam30.map((q) => q.id)).size,
+    30,
+    "Generated 30-question exam should not include duplicates"
+  );
+
+  const allExam = generateExam(999, questions);
+  assert.equal(
+    allExam.length,
+    questions.length,
+    "Large requested exam should include all available questions"
+  );
+
+  const zeroAnswers = exam30.map((q) => ({
+    questionId: q.id,
+    selectedAnswer: null,
+    isCorrect: false,
+  }));
+  const zeroScore = calculateScore(exam30, zeroAnswers);
+  assert.equal(zeroScore.scaledScore, 100, "0% raw score should map to 100 scaled");
+
+  const perfectAnswers = exam30.map((q) => ({
+    questionId: q.id,
+    selectedAnswer: q.correctAnswer,
+    isCorrect: true,
+  }));
+  const perfectScore = calculateScore(exam30, perfectAnswers);
+  assert.equal(perfectScore.scaledScore, 1000, "100% raw score should map to 1000 scaled");
+}
+
+validateQuestionBank();
+testExamGenerationAndScoring();
+console.log("All exam validations passed.");

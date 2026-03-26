@@ -4,12 +4,12 @@ A practice exam app for the **Claude Certified Architect - Foundations (CCA-F)**
 
 ## Features
 
-- **Randomized exams** — 30 or 60 questions drawn from 6 scenario categories, shuffled each attempt
+- **Randomized exams** — choose 15, 30, 60, or All questions from the 160-question bank, shuffled each attempt
 - **Immediate feedback** — see correct/incorrect with detailed explanations after every answer
 - **Domain scoring** — performance breakdown across all 5 weighted domains
-- **Pass/fail determination** — scaled scoring with the official 720/1000 threshold
+- **Pass/fail determination** — uses a practice scaled score (100-1000) with the official 720 passing threshold
 - **Review mode** — revisit all questions and explanations after completing an exam
-- **Countdown timer** — optional timed mode for exam simulation
+- **Countdown timer** — timed for 15/30/60-question modes, no timer for All-questions mode
 - **Dark mode** — automatic via `prefers-color-scheme`
 
 ## Exam Domains

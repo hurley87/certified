@@ -69,14 +69,57 @@ function validateQuestionBank(): void {
   const keyDistribution = countBy(questions.map((q) => q.correctAnswer));
   const maxCount = Math.max(...Object.values(keyDistribution));
   const minCount = Math.min(...Object.values(keyDistribution));
-  const skewRatio = minCount === 0 ? Number.POSITIVE_INFINITY : maxCount / minCount;
-  if (skewRatio > 3) {
-    console.warn(
-      `Warning: source answer-key distribution is imbalanced (${JSON.stringify(
-        keyDistribution
-      )}).`
-    );
-  }
+  const totalQuestions = questions.length;
+  const maxShare = maxCount / totalQuestions;
+  const minShare = minCount / totalQuestions;
+  assert.ok(
+    maxShare <= 0.8,
+    `Answer-key distribution is overly concentrated (${JSON.stringify(keyDistribution)})`
+  );
+  assert.ok(
+    minShare >= 0.01,
+    `Every answer label must be represented (found ${JSON.stringify(keyDistribution)})`
+  );
+
+  // Heuristic quality checks to prevent easily gameable options.
+  // These thresholds are intentionally conservative: they should catch regressions
+  // without blocking iterative content improvements.
+  const optionLengthStats = questions.map((question) => {
+    const lengthsByLabel = question.options.reduce<Record<string, number>>((acc, option) => {
+      acc[option.label] = option.text.length;
+      return acc;
+    }, {});
+    const correctLength = lengthsByLabel[question.correctAnswer];
+    const distractorLengths = question.options
+      .filter((option) => option.label !== question.correctAnswer)
+      .map((option) => option.text.length);
+    const maxLength = Math.max(...Object.values(lengthsByLabel));
+    return {
+      isCorrectLongest: correctLength === maxLength,
+      correctLength,
+      avgDistractorLength:
+        distractorLengths.reduce((sum, value) => sum + value, 0) / distractorLengths.length,
+    };
+  });
+
+  const correctLongestRatio =
+    optionLengthStats.filter((entry) => entry.isCorrectLongest).length / optionLengthStats.length;
+  assert.ok(
+    correctLongestRatio <= 0.93,
+    `Correct options are too often the longest choice (${(correctLongestRatio * 100).toFixed(1)}%)`
+  );
+
+  const avgCorrectLength =
+    optionLengthStats.reduce((sum, entry) => sum + entry.correctLength, 0) / optionLengthStats.length;
+  const avgDistractorLength =
+    optionLengthStats.reduce((sum, entry) => sum + entry.avgDistractorLength, 0) /
+    optionLengthStats.length;
+  assert.ok(
+    avgCorrectLength <= avgDistractorLength * 2.4,
+    `Correct options are disproportionately verbose (avg ${avgCorrectLength.toFixed(
+      1
+    )} vs distractors ${avgDistractorLength.toFixed(1)})`
+  );
 }
 
 function testExamGenerationAndScoring(): void {

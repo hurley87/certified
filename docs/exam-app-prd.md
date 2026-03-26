@@ -9,7 +9,7 @@
 | 1 | Question bank | 160 questions exist in `src/data/questions.ts`. Short task statement codes (e.g., "3.1") are acceptable — not displayed in UI. | Data layer is complete; targeted expansion improved topic coverage. |
 | 2 | State management | React context only (no localStorage). | Keeps it simple. If a database is added later, context still handles client-side UI state while the DB handles persistence — no rework needed. |
 | 3 | Scenario selection | Draw from all 6 scenarios per exam. | Practice tool prioritizes content coverage over exam simulation fidelity. |
-| 4 | Timer | None. `timeSpent` removed from types. | Learning tool — immediate feedback matters more than time pressure. |
+| 4 | Timer | Timed for fixed-length modes (15/30/60), untimed for "All". | Supports both focused drills and simulation-style pacing without adding persistence complexity. |
 | 5 | Exam history | Fire-and-forget. No localStorage persistence of past sessions. | Database is the right persistence layer if history is added later. |
 | 6 | "Review All Questions" | Reuses `/exam` route with a `reviewMode` flag in context. All questions shown in answered state. | No new route or duplicate UI needed. |
 | 7 | Dark mode | Supported via `prefers-color-scheme`. No manual toggle. | Tailwind v4 dark variants are near-zero effort. |
@@ -211,7 +211,7 @@ const SCENARIOS: ScenarioInfo[] = [
 - Subtitle: "Claude Certified Architect - Foundations"
 - Brief description of what the practice exam covers
 - Domain overview: 5 cards/rows showing domain name, weight percentage, and a brief description
-- Question count selector: dropdown or button group with options: 15, 30, All
+- Question count selector: dropdown or button group with options: 15, 30, 60, All
 - "Start Exam" button (prominent, primary color)
 
 ### 4.2 Exam Page (`/exam`)
@@ -341,6 +341,7 @@ rawPercentage = (totalCorrect / totalQuestions) * 100
 scaledScore = 100 + (rawPercentage / 100) * 900
 ```
 This maps 0% correct to 100 and 100% correct to 1000.
+This is a practice-app approximation, not an official psychometric equating model.
 
 ### Pass/Fail
 ```
@@ -388,7 +389,7 @@ domainPercentage = (domainCorrect / domainTotal) * 100
 Each scenario below is an independently verifiable user flow for Ranger browser testing.
 
 ### S1: Landing Page Display
-"User opens the app at localhost:3000. They see a page titled 'CCA-F Practice Exam' with a subtitle 'Claude Certified Architect - Foundations'. Below the title are 5 domain cards showing domain names and weight percentages. A question count selector shows options 15, 30, and All with 30 selected by default. A prominent 'Start Exam' button is visible at the bottom."
+"User opens the app at localhost:3000. They see a page titled 'CCA-F Practice Exam' with a subtitle 'Claude Certified Architect - Foundations'. Below the title are 5 domain cards showing domain names and weight percentages. A question count selector shows options 15, 30, 60, and All with 30 selected by default. A prominent 'Start Exam' button is visible at the bottom."
 
 ### S2: Start Exam Flow
 "User is on the home page with 30 selected as question count. User clicks the 'Start Exam' button. The page navigates to show the first exam question. A progress bar shows '1 of 30'. A colored scenario banner displays one of the 6 scenario names with its description. Below the banner is a question with 4 answer options labeled A through D."
@@ -427,10 +428,13 @@ Each scenario below is an independently verifiable user flow for Ranger browser 
 "User is on an exam question. User presses the 'A' key on their keyboard. Answer option A is selected and the feedback appears. User presses Enter or the right arrow key. The exam advances to the next question."
 
 ### S14: All Questions Question Count
-"User is on the home page. User selects 'All' from the question count selector. User clicks 'Start Exam'. The progress bar shows '1 of N' where N is the total number of questions in the bank (150+). The exam contains all available questions."
+"User is on the home page. User selects 'All' from the question count selector. User clicks 'Start Exam'. The progress bar shows '1 of N' where N is the total number of questions in the bank (160). The exam contains all available questions and does not show a timer."
 
 ### S15: Fifteen Questions Exam
 "User is on the home page. User selects '15' from the question count selector. User clicks 'Start Exam'. The progress bar shows '1 of 15'. After answering all 15 questions, the results page appears with scores calculated from those 15 questions."
+
+### S16: Sixty Questions Exam
+"User is on the home page. User selects '60' from the question count selector. User clicks 'Start Exam'. The progress bar shows '1 of 60' and a countdown timer is visible in the top bar. After answering all 60 questions or when time expires, the app navigates to results with scores computed from all questions."
 
 ---
 

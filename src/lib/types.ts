@@ -32,7 +32,6 @@ export interface DomainResult {
 }
 
 export interface ExamSession {
-  questionCount: number;
   questions: Question[];
   answers: UserAnswer[];
   currentQuestionIndex: number;

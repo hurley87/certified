@@ -32,7 +32,7 @@ export default function ResultsPage() {
 
   if (!session || session.domainResults.length === 0) return null;
 
-  const { scaledScore, passed, rawScore, domainResults, questions, answers } = session;
+  const { scaledScore, passed, rawScore, domainResults, questions } = session;
 
   function toggleExpanded(id: number) {
     setExpandedIds((prev) => {

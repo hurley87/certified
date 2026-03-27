@@ -22,12 +22,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>("system");
   const [mounted, setMounted] = useState(false);
   const themeRef = useRef(theme);
-  themeRef.current = theme;
 
   useEffect(() => {
-    const stored = localStorage.getItem(THEME_STORAGE_KEY);
-    if (stored && VALID_THEMES.has(stored)) setTheme(stored as Theme);
-    setMounted(true);
+    themeRef.current = theme;
+  }, [theme]);
+
+  useEffect(() => {
+    queueMicrotask(() => {
+      const stored = localStorage.getItem(THEME_STORAGE_KEY);
+      if (stored && VALID_THEMES.has(stored)) setTheme(stored as Theme);
+      setMounted(true);
+    });
   }, []);
 
   useEffect(() => {

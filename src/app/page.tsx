@@ -49,24 +49,41 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="space-y-3 mb-10">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-            Exam Domains
-          </h2>
-          {DOMAINS.map((domain) => (
-            <div
-              key={domain.id}
-              className="flex items-center justify-between rounded-lg border border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900"
+        <details className="mb-10 overflow-hidden rounded-lg border border-zinc-200 bg-white open:[&_summary_svg]:rotate-180 dark:border-zinc-800 dark:bg-zinc-900">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/60 [&::-webkit-details-marker]:hidden">
+            <span className="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+              Exam Domains
+            </span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className="h-5 w-5 shrink-0 text-zinc-400 transition-transform duration-200 dark:text-zinc-500"
+              aria-hidden
             >
-              <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                {domain.name}
-              </span>
-              <span className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 tabular-nums">
-                {Math.round(domain.weight * 100)}%
-              </span>
-            </div>
-          ))}
-        </div>
+              <path
+                fillRule="evenodd"
+                d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </summary>
+          <div className="space-y-3 border-t border-zinc-200 px-4 pb-4 pt-3 dark:border-zinc-800">
+            {DOMAINS.map((domain) => (
+              <div
+                key={domain.id}
+                className="flex items-center justify-between rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 dark:border-zinc-700 dark:bg-zinc-950/50"
+              >
+                <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                  {domain.name}
+                </span>
+                <span className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 tabular-nums">
+                  {Math.round(domain.weight * 100)}%
+                </span>
+              </div>
+            ))}
+          </div>
+        </details>
 
         <div className="mb-8">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
@@ -99,12 +116,20 @@ export default function Home() {
           Start Exam
         </button>
 
-        <Link
-          href="/cheat-sheet"
-          className="mt-3 block w-full rounded-lg border border-zinc-200 bg-white px-6 py-3 text-center text-sm font-medium text-zinc-700 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600"
-        >
-          Cheat Sheet &mdash; Key facts to memorize
-        </Link>
+        <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+          <Link
+            href="/cheat-sheet"
+            className="block w-full rounded-lg border border-zinc-200 bg-white px-6 py-3 text-center text-sm font-medium text-zinc-700 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600 sm:flex-1"
+          >
+            Cheat Sheet
+          </Link>
+          <Link
+            href="/notes"
+            className="block w-full rounded-lg border border-zinc-200 bg-white px-6 py-3 text-center text-sm font-medium text-zinc-700 transition-colors hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600 sm:flex-1"
+          >
+            Study Notes
+          </Link>
+        </div>
       </main>
     </div>
   );

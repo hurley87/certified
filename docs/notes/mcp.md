@@ -1,4 +1,4 @@
-# Introduction to Model Context Protocol - Study Notes & Quiz
+# Introduction to Model Context Protocol
 
 ---
 
@@ -55,22 +55,7 @@
 
 ### Lesson 3: Project Setup
 
-**Project type:** CLI-based chatbot that teaches MCP client-server interaction through hands-on implementation.
-
-**Components:**
-- MCP client = connects to custom MCP server
-- MCP server = provides 2 tools (read document, update document)
-- Document collection = fake documents stored in memory only
-
-**Key distinction:** Normal projects implement either client OR server, not both. This project does both for educational purposes.
-
-**Setup process:**
-1. Download CLI_project.zip starter code
-2. Extract and open in code editor
-3. Add API key to .env file
-4. Install dependencies (with/without UV)
-5. Run: `uv run main.py` or `python main.py`
-6. Verify: chat prompt appears, responds to basic queries
+Tutorial MCP projects often include **both** a client and a server so you can trace the full flow end-to-end. A typical learning setup pairs an MCP client (lists and calls tools) with a server that exposes a small tool surface (for example read/update document) and a simple in-memory data layer. Production systems usually implement only one side and integrate with a real backend.
 
 ---
 
@@ -213,7 +198,7 @@ def format_document(doc_id: str) -> list[messages]:
 
 ---
 
-## Assessment and Wrap Up
+## Review and wrap-up
 
 ### Lesson 11: MCP Review
 
@@ -236,56 +221,3 @@ def format_document(doc_id: str) -> list[messages]:
 - Claude's chat starter buttons = prompts
 - Google Drive document selection = resources
 - Code execution = tools
-
----
-
-## Final Assessment Quiz (7 questions)
-
-*Passed with 100% score. Correct answers marked with **bold**.*
-
-**Q1.** You're building an MCP client to connect your application to an MCP server. What are the two main components you need?
-- A) A frontend and a backend
-- B) A database and a web server
-- C) A REST API and a GraphQL endpoint
-- **D) An MCP Client class and a Client Session**
-
-**Q2.** Your MCP client needs to find out what tools are available from an MCP server. What message type should it send?
-- **A) ListToolsRequest**
-- B) CallToolRequest
-- C) ToolDiscoveryRequest
-- D) GetToolsMessage
-
-**Q3.** You've built an MCP server and want to test if your tools work correctly before connecting to a full application. What's the easiest way to do this?
-- A) Write separate test scripts for each tool
-- B) Test everything manually in the terminal
-- **C) Use the built-in MCP Inspector with `mcp dev mcp_server.py`**
-- D) Connect directly to Claude first
-
-**Q4.** You're building a chat app where users ask Claude about their GitHub data. Without MCP, what's the main problem you'd face?
-- A) GitHub doesn't allow API access
-- **B) You'd have to write and maintain all the GitHub tool code yourself**
-- C) Claude can't understand GitHub data
-- D) Users can't ask questions about repositories
-
-**Q5.** You're deciding how to implement a new feature in your MCP server. Users should be able to click a button to trigger a "summarize document" workflow. Which MCP primitive should you use?
-- A) Resources - because you need to fetch document data
-- B) Functions - because it involves processing
-- **C) Prompts - because users control when to start the workflow**
-- D) Tools - because the AI needs new capabilities
-
-**Q6.** You're using the Python MCP SDK to create a tool that reads files. What's the easiest way to define this tool?
-- **A) Use the @mcp.tool() decorator on a Python function**
-- B) Create a separate configuration file
-- C) Write JSON schemas manually
-- D) Send HTTP requests to register the tool
-
-**Q7.** You want to create a resource that fetches different documents based on their ID, like `docs://documents/report.pdf`. What type of resource should you use?
-- **A) A templated resource with parameters in the URI**
-- B) A tool instead of a resource
-- C) A direct resource with a static URI
-- D) A database query resource
-
----
-
-## Scoring
-- Final assessment: **7/7 correct (100%)**

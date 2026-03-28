@@ -1,5 +1,19 @@
-import type { Question, DomainId, AnswerLabel, DomainResult, UserAnswer } from "./types";
+import type {
+  Question,
+  DomainId,
+  AnswerLabel,
+  DomainResult,
+  UserAnswer,
+  ExamMode,
+} from "./types";
+import { questions } from "@/data/questions";
+import { hardQuestions } from "@/data/hard-questions";
 import { DOMAINS, MIN_SCALED_SCORE, MAX_SCALED_SCORE, PASSING_SCORE } from "./constants";
+
+/** Question bank for the selected exam mode (standard vs hard pool). */
+export function getQuestionBank(mode: ExamMode): Question[] {
+  return mode === "hard" ? hardQuestions : questions;
+}
 
 const ANSWER_LABELS: AnswerLabel[] = ["A", "B", "C", "D"];
 

@@ -78,6 +78,11 @@ export default function ResultsPage() {
           <div className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">
             {totalCorrect} of {questions.length} correct ({Math.round(rawScore)}%)
           </div>
+          {session.mode === "hard" && (
+            <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-400">
+              Hard mode exam
+            </p>
+          )}
         </div>
 
         {/* Domain breakdown */}

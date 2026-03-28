@@ -8,15 +8,20 @@ import {
   useMemo,
   type ReactNode,
 } from "react";
-import type { Question, AnswerLabel, ExamSession, UserAnswer } from "@/lib/types";
-import { questions as allQuestions } from "@/data/questions";
-import { generateExam, calculateScore } from "@/lib/exam";
+import type {
+  Question,
+  AnswerLabel,
+  ExamSession,
+  UserAnswer,
+  StartExamOptions,
+} from "@/lib/types";
+import { generateExam, calculateScore, getQuestionBank } from "@/lib/exam";
 import { SCENARIOS, EXAM_TIME_LIMITS } from "@/lib/constants";
 
 interface ExamContextValue {
   session: ExamSession | null;
   answerMap: Map<number, UserAnswer>;
-  startExam: (questionCount: number) => void;
+  startExam: (options: StartExamOptions) => void;
   answerQuestion: (answer: AnswerLabel) => void;
   goToQuestion: (index: number) => void;
   nextQuestion: () => void;
@@ -39,11 +44,13 @@ function finalizeSession(prev: ExamSession, answers: UserAnswer[]): ExamSession 
 export function ExamProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<ExamSession | null>(null);
 
-  const startExam = useCallback((questionCount: number) => {
-    const questions = generateExam(questionCount, allQuestions);
+  const startExam = useCallback(({ questionCount, mode }: StartExamOptions) => {
+    const pool = getQuestionBank(mode);
+    const examQuestions = generateExam(questionCount, pool);
     const timeLimitMs = EXAM_TIME_LIMITS[questionCount] ?? null;
     setSession({
-      questions,
+      mode,
+      questions: examQuestions,
       answers: [],
       currentQuestionIndex: 0,
       reviewMode: false,

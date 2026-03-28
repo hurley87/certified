@@ -1,18 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useExam } from "@/context/ExamContext";
 import { DOMAINS, EXAM_TIME_LIMITS } from "@/lib/constants";
 import { questions } from "@/data/questions";
+import { hardQuestions } from "@/data/hard-questions";
+import type { ExamMode } from "@/lib/types";
 
-const QUESTION_COUNTS = [
-  { label: "15", value: 15 },
-  { label: "30", value: 30 },
-  { label: "60", value: 60 },
-  { label: "All", value: questions.length },
-];
+function buildQuestionCountOptions(poolSize: number): { label: string; value: number }[] {
+  const opts = [15, 30, 60]
+    .filter((n) => n <= poolSize)
+    .map((n) => ({ label: String(n), value: n }));
+  opts.push({ label: "All", value: poolSize });
+  return opts;
+}
 
 function formatTimeLimit(questionCount: number): string {
   const ms = EXAM_TIME_LIMITS[questionCount];
@@ -23,12 +26,25 @@ function formatTimeLimit(questionCount: number): string {
 }
 
 export default function Home() {
+  const [examMode, setExamMode] = useState<ExamMode>("standard");
+  const poolSize = examMode === "hard" ? hardQuestions.length : questions.length;
+  const questionCountOptions = useMemo(() => buildQuestionCountOptions(poolSize), [poolSize]);
   const [questionCount, setQuestionCount] = useState(30);
+  const resolvedQuestionCount = useMemo(() => {
+    if (questionCountOptions.some((o) => o.value === questionCount)) {
+      return questionCount;
+    }
+    return (
+      questionCountOptions.find((o) => o.value === 30)?.value ??
+      questionCountOptions[0]?.value ??
+      30
+    );
+  }, [questionCount, questionCountOptions]);
   const { startExam } = useExam();
   const router = useRouter();
 
   function handleStart() {
-    startExam(questionCount);
+    startExam({ questionCount: resolvedQuestionCount, mode: examMode });
     router.push("/exam");
   }
 
@@ -44,8 +60,9 @@ export default function Home() {
           </p>
           <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400 max-w-lg mx-auto">
             Test your knowledge across 5 domains covering Claude Code, the Agent SDK,
-            the Claude API, and Model Context Protocol. Each exam draws from a bank of {questions.length} questions
-            with randomized answer order.
+            the Claude API, and Model Context Protocol. Each exam draws from a bank of {poolSize}{" "}
+            questions
+            {examMode === "hard" ? " (hard mode)" : ""} with randomized answer order.
           </p>
         </div>
 
@@ -87,15 +104,40 @@ export default function Home() {
 
         <div className="mb-8">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
+            Difficulty
+          </h2>
+          <div className="flex gap-2 mb-6">
+            {(
+              [
+                { label: "Standard", value: "standard" as const },
+                { label: "Hard", value: "hard" as const },
+              ] as const
+            ).map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setExamMode(opt.value)}
+                className={`flex-1 rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${
+                  examMode === opt.value
+                    ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
+                    : "border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3">
             Questions
           </h2>
           <div className="flex gap-2">
-            {QUESTION_COUNTS.map((opt) => (
+            {questionCountOptions.map((opt) => (
               <button
                 key={opt.label}
+                type="button"
                 onClick={() => setQuestionCount(opt.value)}
                 className={`flex-1 rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${
-                  questionCount === opt.value
+                  resolvedQuestionCount === opt.value
                     ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
                     : "border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600"
                 }`}
@@ -105,7 +147,7 @@ export default function Home() {
             ))}
           </div>
           <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
-            {formatTimeLimit(questionCount)}
+            {formatTimeLimit(resolvedQuestionCount)}
           </p>
         </div>
 

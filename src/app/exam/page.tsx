@@ -116,8 +116,13 @@ export default function ExamPage() {
         {/* Progress bar */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+            <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400 flex flex-wrap items-center gap-2">
               Question {progress} of {total}
+              {session.mode === "hard" && (
+                <span className="rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-amber-900 dark:border-amber-700 dark:bg-amber-950/50 dark:text-amber-200">
+                  Hard mode
+                </span>
+              )}
             </span>
             <div className="flex items-center gap-3">
               {hasTimer && !isReviewMode && (

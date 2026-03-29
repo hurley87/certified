@@ -73,13 +73,18 @@ function validateQuestionBank(): void {
   const totalQuestions = questions.length;
   const maxShare = maxCount / totalQuestions;
   const minShare = minCount / totalQuestions;
+  const expectedPerLetter = totalQuestions / 4;
   assert.ok(
-    maxShare <= 0.8,
-    `Answer-key distribution is overly concentrated (${JSON.stringify(keyDistribution)})`
+    maxShare <= 0.28,
+    `Answer-key distribution is overly concentrated (${JSON.stringify(keyDistribution)}; target ~25% per letter)`
   );
   assert.ok(
-    minShare >= 0.01,
-    `Every answer label must be represented (found ${JSON.stringify(keyDistribution)})`
+    minShare >= 0.22,
+    `Answer-key distribution is too sparse for a label (${JSON.stringify(keyDistribution)}; target ~25% per letter)`
+  );
+  assert.ok(
+    Math.abs(maxCount - expectedPerLetter) <= 2,
+    `Largest answer bucket should be within 2 of even split (${JSON.stringify(keyDistribution)})`
   );
 
   // Heuristic quality checks to prevent easily gameable options.
@@ -106,8 +111,8 @@ function validateQuestionBank(): void {
   const correctLongestRatio =
     optionLengthStats.filter((entry) => entry.isCorrectLongest).length / optionLengthStats.length;
   assert.ok(
-    correctLongestRatio <= 0.93,
-    `Correct options are too often the longest choice (${(correctLongestRatio * 100).toFixed(1)}%)`
+    correctLongestRatio <= 0.35,
+    `Correct options are too often the longest choice (${(correctLongestRatio * 100).toFixed(1)}%; target ~25%)`
   );
 
   const avgCorrectLength =
@@ -116,10 +121,10 @@ function validateQuestionBank(): void {
     optionLengthStats.reduce((sum, entry) => sum + entry.avgDistractorLength, 0) /
     optionLengthStats.length;
   assert.ok(
-    avgCorrectLength <= avgDistractorLength * 2.4,
+    avgCorrectLength <= avgDistractorLength * 1.35,
     `Correct options are disproportionately verbose (avg ${avgCorrectLength.toFixed(
       1
-    )} vs distractors ${avgDistractorLength.toFixed(1)})`
+    )} vs distractors ${avgDistractorLength.toFixed(1)}; target ratio <= 1.35)`
   );
 }
 
@@ -184,13 +189,18 @@ function validateHardQuestionBank(): void {
   const hardTotal = hardQuestions.length;
   const hardMaxShare = Math.max(...Object.values(hardKeyDistribution)) / hardTotal;
   const hardMinShare = Math.min(...Object.values(hardKeyDistribution)) / hardTotal;
+  const hardExpected = hardTotal / 4;
   assert.ok(
-    hardMaxShare <= 0.8,
+    hardMaxShare <= 0.28,
     `Hard answer-key distribution is overly concentrated (${JSON.stringify(hardKeyDistribution)})`
   );
   assert.ok(
-    hardMinShare >= 0.01,
-    `Every answer label must appear in hard pool (found ${JSON.stringify(hardKeyDistribution)})`
+    hardMinShare >= 0.22,
+    `Hard answer-key distribution is too sparse for a label (${JSON.stringify(hardKeyDistribution)})`
+  );
+  assert.ok(
+    Math.abs(Math.max(...Object.values(hardKeyDistribution)) - hardExpected) <= 1,
+    `Hard pool letter counts should be nearly even (${JSON.stringify(hardKeyDistribution)})`
   );
 
   const hardOptionLengthStats = hardQuestions.map((question) => {
@@ -214,7 +224,7 @@ function validateHardQuestionBank(): void {
   const hardCorrectLongestRatio =
     hardOptionLengthStats.filter((entry) => entry.isCorrectLongest).length / hardOptionLengthStats.length;
   assert.ok(
-    hardCorrectLongestRatio <= 0.93,
+    hardCorrectLongestRatio <= 0.35,
     `Hard pool: correct options are too often the longest choice (${(hardCorrectLongestRatio * 100).toFixed(1)}%)`
   );
 
@@ -224,7 +234,7 @@ function validateHardQuestionBank(): void {
     hardOptionLengthStats.reduce((sum, entry) => sum + entry.avgDistractorLength, 0) /
     hardOptionLengthStats.length;
   assert.ok(
-    hardAvgCorrectLength <= hardAvgDistractorLength * 2.4,
+    hardAvgCorrectLength <= hardAvgDistractorLength * 1.35,
     `Hard pool: correct options are disproportionately verbose (avg ${hardAvgCorrectLength.toFixed(
       1
     )} vs distractors ${hardAvgDistractorLength.toFixed(1)})`

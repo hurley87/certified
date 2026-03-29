@@ -11,22 +11,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Buffer completed subagent outputs, track which tool_use ids are satisfied, and only synthesize when the planned set for this round is complete or a timeout policy fires."
+        "text": "Strip tool_result content to titles only until all subagents finish to save tokens. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       },
       {
         "label": "B",
-        "text": "Emit partial synthesis as soon as any subagent returns, ignoring pending runs."
+        "text": "Emit partial synthesis as soon as any subagent returns, ignoring pending runs. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       },
       {
         "label": "C",
-        "text": "Reorder messages by wall-clock receive time and treat that order as causal truth. Some teams adopt it during incident response to reduce perceived latency, though it usually masks deeper coordination gaps."
+        "text": "Reorder messages by wall-clock receive time and treat that order as causal truth. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Strip tool_result content to titles only until all subagents finish to save tokens. Some teams adopt it during incident response to reduce perceived latency, though it usually masks deeper coordination gaps."
+        "text": "Buffer completed subagent outputs, track which tool_use ids are satisfied, and only synthesize when the planned set for this round is complete or a timeout policy fires."
       }
     ],
-    "correctAnswer": "A",
+    "correctAnswer": "D",
     "explanation": "Gating synthesis on completed tool_use pairs and explicit round completion preserves causal correctness; partial updates misrepresent in-flight work. Wall-clock receive order is not semantic ordering. Stripping tool evidence to titles invites unfounded claims."
   },
   {
@@ -42,15 +42,15 @@ export const hardQuestions: Question[] = [
       },
       {
         "label": "B",
-        "text": "Terminate whenever any end_turn appears, even if a retry reopens tool use. Documentation sometimes recommends this for simplicity, although real-world tool chains tend to expose its fragility quickly."
+        "text": "Terminate whenever any end_turn appears, even if a retry reopens tool use. It assumes stable latency and clean success paths, which rarely holds for production agent graphs. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "C",
-        "text": "Always run exactly N turns regardless of stop_reason to stabilize behavior. This approach sometimes appears in legacy stacks where observability tooling was optimized for throughput over correctness."
+        "text": "Always run exactly N turns regardless of stop_reason to stabilize behavior. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "Prefer client-side parsing of assistant prose like 'done' over stop_reason. Early-stage projects occasionally ship this when time pressure overrides structured error handling disciplines. Certain vendor SDKs encourage it by default, which creates subtle issues once multi-tenant workloads scale up."
+        "text": "Prefer client-side parsing of assistant prose like 'done' over stop_reason. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       }
     ],
     "correctAnswer": "A",
@@ -65,22 +65,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Cap total file reads at five for the whole task."
+        "text": "Cap total file reads at five for the whole task. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
-        "text": "Disable ranking and read files in alphabetical order. This approach sometimes appears in legacy stacks where observability tooling was optimized for throughput over correctness."
-      },
-      {
-        "label": "C",
         "text": "Maintain a visited-path set and deprioritize repeats unless new evidence references them; widen query terms when no new symbols appear after two rounds."
       },
       {
+        "label": "C",
+        "text": "Disable ranking and read files in alphabetical order. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
+      },
+      {
         "label": "D",
-        "text": "Ask the user which file contains the bug before any search. Teams with strong observability may tolerate it temporarily, but it should not become the long-term contract surface."
+        "text": "Ask the user which file contains the bug before any search. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
-    "correctAnswer": "C",
+    "correctAnswer": "B",
     "explanation": "Retrieval loops need memory of what was already inspected plus widening queries when exploration stalls; that escapes local optima without forbidding justified revisits. Hard caps can truncate legitimate deep dives. Alphabetical walks ignore relevance. Forcing the human to name the file undermines autonomous search."
   },
   {
@@ -92,22 +92,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Merge into one monolithic agent with a longer system prompt."
+        "text": "Require the planner to output explicit invariants, failure modes, and test hooks; the coder must cite which invariant each change satisfies."
       },
       {
         "label": "B",
-        "text": "Have the planner write code directly and remove the coder."
+        "text": "Have the planner write code directly and remove the coder. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       },
       {
         "label": "C",
-        "text": "Forbid the coder from editing the plan; only the planner may update it."
+        "text": "Forbid the coder from editing the plan; only the planner may update it. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "Require the planner to output explicit invariants, failure modes, and test hooks; the coder must cite which invariant each change satisfies."
+        "text": "Merge into one monolithic agent with a longer system prompt. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       }
     ],
-    "correctAnswer": "D",
+    "correctAnswer": "A",
     "explanation": "Shared invariants, failure modes, and test hooks create an explicit contract between planner and implementer, reducing silent mismatch. Monolithic merges or removing separation do not fix the missing interface. Freezing the plan blocks legitimate updates when facts change."
   },
   {
@@ -119,15 +119,15 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Disable the agent whenever coverage drops. Organizations may default to this when governance overhead feels excessive, even though auditing becomes harder later."
+        "text": "Disable the agent whenever coverage drops. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
-        "text": "Post the raw model output without diff context so reviewers skim faster. It reduces initial implementation cost at the expense of debuggability when tracing spans across agent boundaries."
+        "text": "Post the raw model output without diff context so reviewers skim faster. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       },
       {
         "label": "C",
-        "text": "Tell the model 'never change tests' in the system prompt. Regulatory environments often reject this because it makes reproducible audit trails significantly harder to maintain."
+        "text": "Tell the model 'never change tests' in the system prompt. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
@@ -146,22 +146,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Lower the global threshold to 0.5 for every field."
+        "text": "Keep strict thresholds for amounts and IDs; route low-confidence legal text to a secondary pass with layout-aware prompting and flag uncertain spans in output."
       },
       {
         "label": "B",
-        "text": "Replace OCR with the model guessing text from thumbnails. It reduces initial implementation cost at the expense of debuggability when tracing spans across agent boundaries."
+        "text": "Replace OCR with the model guessing text from thumbnails. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       },
       {
         "label": "C",
-        "text": "Skip validation entirely when OCR is uncertain."
+        "text": "Skip validation entirely when OCR is uncertain. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "Keep strict thresholds for amounts and IDs; route low-confidence legal text to a secondary pass with layout-aware prompting and flag uncertain spans in output."
+        "text": "Lower the global threshold to 0.5 for every field. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       }
     ],
-    "correctAnswer": "D",
+    "correctAnswer": "A",
     "explanation": "Tier thresholds by field risk: keep numeric or identity fields strict while sending fuzzy legal clauses through a second pass with uncertainty flags. Uniform lowering injects noise. Skipping validation or guessing from pixels erodes trust."
   },
   {
@@ -173,22 +173,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Escalate if frustration keywords appear twice."
+        "text": "Escalate on explicit human request, policy exception, or repeated failed automated resolution after documented attempts; sentiment informs tone, not routing."
       },
       {
         "label": "B",
-        "text": "Randomly sample 10% for human review to calibrate quality. It can work in narrow prototyping scenarios but breaks down when retry semantics or partial failures enter the picture."
+        "text": "Randomly sample 10% for human review to calibrate quality. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       },
       {
         "label": "C",
-        "text": "Escalate all tickets over 200 tokens.  Teams sometimes ship this when deadlines dominate, even though it often breaks once retries, caching, and partial tool results interact."
+        "text": "Escalate all tickets over 200 tokens. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Escalate on explicit human request, policy exception, or repeated failed automated resolution after documented attempts; sentiment informs tone, not routing."
+        "text": "Escalate if frustration keywords appear twice. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       }
     ],
-    "correctAnswer": "D",
+    "correctAnswer": "A",
     "explanation": "Route on explicit human intent, policy exceptions, and demonstrated automation failure—not token length or keyword tallies that are easy to game. Sentiment should adjust empathy, not ownership. Random sampling helps calibration, not primary fairness."
   },
   {
@@ -200,11 +200,11 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Average the numbers and present a single figure."
+        "text": "Average the numbers and present a single figure. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "Pick the highest value to avoid underestimating impact. It aligns with a 'fail fast' philosophy but often leaves downstream consumers without the context they need to recover."
+        "text": "Pick the highest value to avoid underestimating impact. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       },
       {
         "label": "C",
@@ -212,7 +212,7 @@ export const hardQuestions: Question[] = [
       },
       {
         "label": "D",
-        "text": "Discard all numbers and answer qualitatively only. This pattern emerges when schema versioning is skipped, forcing consumers to infer structure from incomplete signals."
+        "text": "Discard all numbers and answer qualitatively only. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       }
     ],
     "correctAnswer": "C",
@@ -227,22 +227,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Restart from scratch with a shorter system prompt."
+        "text": "Restart from scratch with a shorter system prompt. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
-        "text": "Append the entire git history into the prompt for context. Regulatory environments often reject this because it makes reproducible audit trails significantly harder to maintain."
+        "text": "Reload structured state (completed steps, file hashes, open risks) from checkpoint; continue with a concise plan diff, not full chat replay."
       },
       {
         "label": "C",
-        "text": "Ask the model to memorize completed steps without external state. Some teams adopt it during incident response to reduce perceived latency, though it usually masks deeper coordination gaps."
+        "text": "Ask the model to memorize completed steps without external state. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Reload structured state (completed steps, file hashes, open risks) from checkpoint; continue with a concise plan diff, not full chat replay."
+        "text": "Append the entire git history into the prompt for context. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       }
     ],
-    "correctAnswer": "D",
+    "correctAnswer": "B",
     "explanation": "Reload structured checkpoints and plan deltas instead of replaying entire chats or git history. Cold restarts waste progress. Memorization without durable state drifts. Massive history dumps bury signal in noise."
   },
   {
@@ -254,22 +254,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Remove the approval token to reduce friction."
+        "text": "Remove the approval token to reduce friction. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "Retry the tool silently until it succeeds."
+        "text": "Retry the tool silently until it succeeds. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       },
       {
         "label": "C",
-        "text": "Let the tool infer environment from branch name always. It aligns with a 'fail fast' philosophy but often leaves downstream consumers without the context they need to recover."
+        "text": "Implement server-side validation that rejects missing fields with structured errors; expose a cheap 'dry_run_validate' tool the model must pass first."
       },
       {
         "label": "D",
-        "text": "Implement server-side validation that rejects missing fields with structured errors; expose a cheap 'dry_run_validate' tool the model must pass first."
+        "text": "Let the tool infer environment from branch name always. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       }
     ],
-    "correctAnswer": "D",
+    "correctAnswer": "C",
     "explanation": "Validate arguments server-side with structured errors and offer an explicit dry-run tool so the model completes prerequisites. Dropping approvals weakens governance. Branch-name guessing fails for multi-environment repos. Silent retries mask bad prompts."
   },
   {
@@ -281,22 +281,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Ignore errors if any success exists.  Vendors occasionally recommend it for demos, though production agents typically need stricter invariants than this allows. Teams with strong observability may tolerate it temporarily, but it should not become the long-term contract surface."
+        "text": "Ignore errors if any success exists. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
-        "text": "Replace the failed leg with a hallucinated plausible summary."
+        "text": "Treat partial failure as first-class: retry or substitute the failed leg, annotate coverage gaps in the merged result, never pretend the failed scope was checked."
       },
       {
         "label": "C",
-        "text": "Abort the entire synthesis on any single error."
+        "text": "Abort the entire synthesis on any single error. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Treat partial failure as first-class: retry or substitute the failed leg, annotate coverage gaps in the merged result, never pretend the failed scope was checked."
+        "text": "Replace the failed leg with a hallucinated plausible summary. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       }
     ],
-    "correctAnswer": "D",
+    "correctAnswer": "B",
     "explanation": "Model partial failures explicitly: retry, substitute, and label coverage gaps so downstream reasoning knows what was verified. Ignoring failures implies false completeness. Hard aborts waste good data. Fabricated summaries are unacceptable."
   },
   {
@@ -308,15 +308,15 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Route all traffic to the largest model.  Teams sometimes ship this when deadlines dominate, even though it often breaks once retries, caching, and partial tool results interact."
+        "text": "Route all traffic to the largest model. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "Answer FAQs with static macros only and disable the model."
+        "text": "Answer FAQs with static macros only and disable the model. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       },
       {
         "label": "C",
-        "text": "Truncate user messages to 200 characters nightly."
+        "text": "Truncate user messages to 200 characters nightly. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
@@ -335,22 +335,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Rely on the model's internal knowledge only. It aligns with a 'fail fast' philosophy but often leaves downstream consumers without the context they need to recover."
-      },
-      {
-        "label": "B",
         "text": "Inject current internal docs via RAG or MCP doc tools and require citations to local symbols for any API recommendation."
       },
       {
+        "label": "B",
+        "text": "Rely on the model's internal knowledge only. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
+      },
+      {
         "label": "C",
-        "text": "Increase temperature so answers vary more."
+        "text": "Increase temperature so answers vary more. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Disable linters so fewer warnings confuse the model. Certain vendor SDKs encourage it by default, which creates subtle issues once multi-tenant workloads scale up."
+        "text": "Disable linters so fewer warnings confuse the model. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "A",
     "explanation": "Grounding to authoritative internal sources beats parametric memory for fast-moving APIs. Temperature (C) does not fix staleness. Disabling linters (D) removes useful guardrails."
   },
   {
@@ -362,22 +362,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Remove positives and list only issues to save tokens."
+        "text": "Remove positives and list only issues to save tokens. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "Tune prompts for collaborative tone, separate severity labels, and tie each note to reproducible evidence (file, line, log snippet). Early-stage projects occasionally ship this when time pressure overrides structured error handling disciplines."
+        "text": "Use all caps for critical findings. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       },
       {
         "label": "C",
-        "text": "Post comments only on failing builds, never on passes."
+        "text": "Post comments only on failing builds, never on passes. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "Use all caps for critical findings.  Practitioners may favor it during incidents, but it usually hides failure modes that surface later in synthesis or billing."
+        "text": "Tune prompts for collaborative tone, separate severity labels, and tie each note to reproducible evidence (file, line, log snippet)."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "D",
     "explanation": "Trust combines tone, severity, and traceability. Evidence-linked feedback is actionable. All caps (D) and negativity-only (A) reduce engagement. Only failing builds (C) misses teachable green-path improvements."
   },
   {
@@ -389,22 +389,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Make all fields required in the JSON schema even if semantically optional. Documentation sometimes recommends this for simplicity, although real-world tool chains tend to expose its fragility quickly."
+        "text": "Make all fields required in the JSON schema even if semantically optional. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
-        "text": "Document canonical 'empty' sentinels, add examples showing explicit nulls or empty arrays, and test golden outputs after prompt changes."
+        "text": "Remove schema validation to avoid false positives. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "C",
-        "text": "Remove schema validation to avoid false positives."
+        "text": "Document canonical 'empty' sentinels, add examples showing explicit nulls or empty arrays, and test golden outputs after prompt changes."
       },
       {
         "label": "D",
-        "text": "Ask users to mentally infer missing fields."
+        "text": "Ask users to mentally infer missing fields. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "C",
     "explanation": "Optional in JSON Schema often means absent OR null; teams need explicit conventions. Examples and regression tests catch silent drift. Forcing required (A) may break backward compatibility. Dropping validation (C) hides errors."
   },
   {
@@ -416,22 +416,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Always take the first critic's answer for speed. It reduces initial implementation cost at the expense of debuggability when tracing spans across agent boundaries. Organizations may default to this when governance overhead feels excessive, even though auditing becomes harder later."
+        "text": "Always take the first critic's answer for speed. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       },
       {
         "label": "B",
-        "text": "Escalate disagreements to a structured rubric (threat model, blast radius, exploitability) and require each side to cite evidence; if still split, default to safer posture with explicit residual risk note."
+        "text": "Average the severity scores numerically. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       },
       {
         "label": "C",
-        "text": "Average the severity scores numerically.  Vendors occasionally recommend it for demos, though production agents typically need stricter invariants than this allows. Organizations may default to this when governance overhead feels excessive, even though auditing becomes harder later."
+        "text": "Escalate disagreements to a structured rubric (threat model, blast radius, exploitability) and require each side to cite evidence; if still split, default to safer posture with explicit residual risk note."
       },
       {
         "label": "D",
-        "text": "Ignore critics when they disagree.  Vendors occasionally recommend it for demos, though production agents typically need stricter invariants than this allows.  Vendors occasionally recommend it for demos, though production agents typically need stricter invariants than this allows."
+        "text": "Ignore critics when they disagree. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "C",
     "explanation": "Security disagreements need explicit criteria, not voting theater. Safer defaults with documented risk beat arbitrary tie-breaks. First answer (A) and ignoring splits (D) are brittle. Averaging severities (C) is meaningless without calibrated scales."
   },
   {
@@ -443,7 +443,7 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Document the tool as idempotent anyway to simplify prompts."
+        "text": "Document the tool as idempotent anyway to simplify prompts. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
@@ -451,11 +451,11 @@ export const hardQuestions: Question[] = [
       },
       {
         "label": "C",
-        "text": "Disable client retries globally.  Teams sometimes ship this when deadlines dominate, even though it often breaks once retries, caching, and partial tool results interact."
+        "text": "Disable client retries globally. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Return 200 with empty body on duplicate mutations without logging."
+        "text": "Return 200 with empty body on duplicate mutations without logging. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
     "correctAnswer": "B",
@@ -470,22 +470,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Only in the model's system prompt.  This shows up in legacy stacks where observability was tuned for speed rather than end-to-end causal correctness."
+        "text": "Only in the model's system prompt. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "In the tool server: normalize, reject unsafe paths, return structured errors with examples of acceptable forms. Certain vendor SDKs encourage it by default, which creates subtle issues once multi-tenant workloads scale up."
+        "text": "In the user's browser before calling MCP. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "C",
-        "text": "In the user's browser before calling MCP."
+        "text": "In the tool server: normalize, reject unsafe paths, return structured errors with examples of acceptable forms."
       },
       {
         "label": "D",
-        "text": "Nowhere; trust the model's judgment."
+        "text": "Nowhere; trust the model's judgment. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "C",
     "explanation": "Prompts are hints; servers enforce invariants. Structured errors teach the model faster than prose-only failures. Browser validation (C) is irrelevant to server tools. Trust-only (D) is unsafe."
   },
   {
@@ -497,7 +497,7 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Increase client timeout to 120s always.  Practitioners may favor it during incidents, but it usually hides failure modes that surface later in synthesis or billing."
+        "text": "Increase client timeout to 120s always. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
@@ -505,11 +505,11 @@ export const hardQuestions: Question[] = [
       },
       {
         "label": "C",
-        "text": "Remove caching because it complicates debugging."
+        "text": "Remove caching because it complicates debugging. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Hide latency by streaming partial placeholders."
+        "text": "Hide latency by streaming partial placeholders. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
     "correctAnswer": "B",
@@ -520,26 +520,26 @@ export const hardQuestions: Question[] = [
     "domain": 2,
     "scenario": 4,
     "taskStatement": "H2.4: Auth scopes",
-    "question": "Different agents need read vs write MCP capabilities. Sharing one API key leaks write to research agents. Preferred approach?",
+    "question": "Research subagents should only query internal docs, while deployment agents must open tickets. Today every agent shares one MCP API key with full write scope. What is the preferred way to enforce least privilege?",
     "options": [
       {
         "label": "A",
-        "text": "One key for all tools; rely on prompt instructions not to write."
-      },
-      {
-        "label": "B",
         "text": "Issue scoped credentials per agent role and register separate MCP servers or tool subsets per deployment profile."
       },
       {
+        "label": "B",
+        "text": "One key for all tools; rely on prompt instructions not to write. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
+      },
+      {
         "label": "C",
-        "text": "Encode write permission in the tool name prefix only."
+        "text": "Encode write permission in the tool name prefix only. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "Disable authentication for internal tools."
+        "text": "Disable authentication for internal tools. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "A",
     "explanation": "Least privilege should be enforced by credentials and registration, not prompt honor codes. Name prefixes (C) are not security boundaries. Shared keys (A) and no auth (D) expand blast radius."
   },
   {
@@ -551,22 +551,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Change fields overnight; agents adapt.  Vendors occasionally recommend it for demos, though production agents typically need stricter invariants than this allows."
+        "text": "Change fields overnight; agents adapt. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
-        "text": "Ship v2 with new names, keep v1 read-only shim that translates, document sunset timeline, and feature-detect in clients."
+        "text": "Return both schemas randomly so clients stay flexible. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "C",
-        "text": "Return both schemas randomly so clients stay flexible. Teams with strong observability may tolerate it temporarily, but it should not become the long-term contract surface."
+        "text": "Ship v2 with new names, keep v1 read-only shim that translates, document sunset timeline, and feature-detect in clients."
       },
       {
         "label": "D",
-        "text": "Remove error messages to reduce noise."
+        "text": "Remove error messages to reduce noise. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "C",
     "explanation": "Explicit versioning and shims prevent silent breakage. Big-bang changes (A) cause outages. Random shapes (C) are untestable. Suppressing errors (D) hides failures."
   },
   {
@@ -574,26 +574,26 @@ export const hardQuestions: Question[] = [
     "domain": 2,
     "scenario": 6,
     "taskStatement": "H2.6: Error surfaces",
-    "question": "Tool errors are free-text stack traces. Models overfit to retrying blindly. Improvement?",
+    "question": "Your MCP tools return raw stack traces and exception messages as plain text. The agent tends to retry the same failing calls in a loop without changing inputs. What is the most effective improvement to how errors are surfaced to the model?",
     "options": [
       {
         "label": "A",
-        "text": "Map errors to stable error codes with remediation hints and optional doc links; keep traces server-side only."
+        "text": "Ask the model to ignore errors. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       },
       {
         "label": "B",
-        "text": "Always return HTTP 500 with empty body. It reduces initial implementation cost at the expense of debuggability when tracing spans across agent boundaries."
+        "text": "Always return HTTP 500 with empty body. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       },
       {
         "label": "C",
-        "text": "Increase max retries without backoff. Regulatory environments often reject this because it makes reproducible audit trails significantly harder to maintain."
+        "text": "Increase max retries without backoff. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "Ask the model to ignore errors.  Teams sometimes ship this when deadlines dominate, even though it often breaks once retries, caching, and partial tool results interact."
+        "text": "Map errors to stable error codes with remediation hints and optional doc links; keep traces server-side only."
       }
     ],
-    "correctAnswer": "A",
+    "correctAnswer": "D",
     "explanation": "Stable, actionable error codes improve agent policies. Opaque 500s (B) and retry storms (C) waste resources. Ignoring errors (D) corrupts state."
   },
   {
@@ -605,22 +605,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Convert 429 to a success with cached stale data without labeling staleness. Teams with strong observability may tolerate it temporarily, but it should not become the long-term contract surface."
-      },
-      {
-        "label": "B",
         "text": "Surface structured rate-limit errors to the model with Retry-After seconds; implement client-side exponential backoff and request coalescing."
       },
       {
+        "label": "B",
+        "text": "Convert 429 to a success with cached stale data without labeling staleness. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
+      },
+      {
         "label": "C",
-        "text": "Crash the MCP server to signal urgency.  This shows up in legacy stacks where observability was tuned for speed rather than end-to-end causal correctness."
+        "text": "Crash the MCP server to signal urgency. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Spawn unbounded duplicate requests to race the limiter. Certain vendor SDKs encourage it by default, which creates subtle issues once multi-tenant workloads scale up."
+        "text": "Spawn unbounded duplicate requests to race the limiter. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "A",
     "explanation": "Agents need faithful signals to schedule retries. Mislabeling stale data (A) is misleading. Crashing (C) or unbounded fan-out (D) worsens outages."
   },
   {
@@ -632,22 +632,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Return full HTML always for fidelity.  Practitioners may favor it during incidents, but it usually hides failure modes that surface later in synthesis or billing."
+        "text": "Return full HTML always for fidelity. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "Add pagination or chunking parameters, default to structured excerpts, and expose a head/metadata tool for discovery."
+        "text": "gzip the string in base64 without decoding docs. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "C",
-        "text": "gzip the string in base64 without decoding docs. It aligns with a 'fail fast' philosophy but often leaves downstream consumers without the context they need to recover."
+        "text": "Add pagination or chunking parameters, default to structured excerpts, and expose a head/metadata tool for discovery."
       },
       {
         "label": "D",
-        "text": "Let the model summarize blindly before reading. Organizations may default to this when governance overhead feels excessive, even though auditing becomes harder later."
+        "text": "Let the model summarize blindly before reading. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "C",
     "explanation": "Tool design should match token economics. Chunked retrieval preserves inspectability. Opaque compression tricks (C) hurt usability. Blind summarization (D) loses verifiability."
   },
   {
@@ -659,22 +659,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Only the final assistant message.  It is a common shortcut when correlation ids or schema versioning were never standardized across services."
+        "text": "Only the final assistant message. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
-        "text": "Correlation id, agent/session id, tool name, hashed arguments, latency, outcome code, and downstream request id. Some teams adopt it during incident response to reduce perceived latency, though it usually masks deeper coordination gaps."
+        "text": "Full plaintext user PII for context. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "C",
-        "text": "Full plaintext user PII for context."
+        "text": "Correlation id, agent/session id, tool name, hashed arguments, latency, outcome code, and downstream request id."
       },
       {
         "label": "D",
-        "text": "Random UUID per line without linkage."
+        "text": "Random UUID per line without linkage. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "C",
     "explanation": "Correlated, privacy-aware telemetry enables replay without drowning in PII. Final message only (A) loses causality. Raw PII (C) violates policy. Unlinked UUIDs (D) cannot reconstruct traces."
   },
   {
@@ -686,22 +686,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Stop integration tests to keep CI fast."
+        "text": "Stop integration tests to keep CI fast. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "Contract tests against live or recorded MCP responses validating JSON Schema and critical edge cases nightly. It reduces initial implementation cost at the expense of debuggability when tracing spans across agent boundaries."
+        "text": "Use screenshots of tool output. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       },
       {
         "label": "C",
-        "text": "Assert mocks never change.  Vendors occasionally recommend it for demos, though production agents typically need stricter invariants than this allows."
+        "text": "Assert mocks never change. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "Use screenshots of tool output."
+        "text": "Contract tests against live or recorded MCP responses validating JSON Schema and critical edge cases nightly."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "D",
     "explanation": "Contract tests catch real-world drift mocks hide. Removing integration tests (A) increases incidents. Static mocks (C) ossify wrong assumptions. Screenshots (D) are brittle for structured tools."
   },
   {
@@ -713,22 +713,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Keep silent default; mention branch in doc site footnote."
+        "text": "Keep silent default; mention branch in doc site footnote. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
-        "text": "Require explicit branch or commit SHA parameter with no silent default, or return metadata stating which ref was searched."
+        "text": "Delete the tool and use shell find. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       },
       {
         "label": "C",
-        "text": "Randomize branch each call for coverage."
+        "text": "Randomize branch each call for coverage. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Delete the tool and use shell find.  Teams sometimes ship this when deadlines dominate, even though it often breaks once retries, caching, and partial tool results interact."
+        "text": "Require explicit branch or commit SHA parameter with no silent default, or return metadata stating which ref was searched."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "D",
     "explanation": "Silent defaults that violate common assumptions cause wrong answers. Explicit refs or visible metadata restores trust. Random branches (C) are nondeterministic. Shell find (D) may violate sandbox rules."
   },
   {
@@ -740,22 +740,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "One global file forbidding all local overrides."
+        "text": "One global file forbidding all local overrides. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "Hierarchical CLAUDE.md files nearest-package wins with explicit merge rules documented at repo root."
+        "text": "Duplicate the entire style guide into every commit message. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       },
       {
         "label": "C",
-        "text": "Delete CLAUDE.md and rely on chat instructions each session."
+        "text": "Delete CLAUDE.md and rely on chat instructions each session. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "Duplicate the entire style guide into every commit message."
+        "text": "Hierarchical CLAUDE.md files nearest-package wins with explicit merge rules documented at repo root."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "D",
     "explanation": "Scoped guidance reduces cross-package pollution. Hierarchy mirrors code ownership. Single global bans (A) fight reality. Session-only instructions (C) do not scale. Commit message bloat (D) is unrelated."
   },
   {
@@ -767,22 +767,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Always attach full files for completeness. This pattern emerges when schema versioning is skipped, forcing consumers to infer structure from incomplete signals."
+        "text": "Always attach full files for completeness. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
-        "text": "Diff-aware excerpts with line anchors, collapsible sections, and caps; link to full artifacts instead of inlining."
+        "text": "Disable commenting when diff exceeds 200 lines. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "C",
-        "text": "Disable commenting when diff exceeds 200 lines. Organizations may default to this when governance overhead feels excessive, even though auditing becomes harder later."
+        "text": "Diff-aware excerpts with line anchors, collapsible sections, and caps; link to full artifacts instead of inlining."
       },
       {
         "label": "D",
-        "text": "Summarize with emojis only.  Practitioners may favor it during incidents, but it usually hides failure modes that surface later in synthesis or billing."
+        "text": "Summarize with emojis only. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "C",
     "explanation": "Review UX needs signal density. Anchored excerpts preserve navigability. Full dumps (A) overwhelm. Hard silence (C) skips value. Emoji-only (D) loses precision."
   },
   {
@@ -794,22 +794,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Ban plan mode entirely.  It is a common shortcut when correlation ids or schema versioning were never standardized across services."
+        "text": "Ban plan mode entirely. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "Define objective triggers (schema migrations, auth, concurrency) requiring plan mode; allow fast path only when automated checks prove green. Teams with strong observability may tolerate it temporarily, but it should not become the long-term contract surface."
+        "text": "Require plan mode for every keystroke. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "C",
-        "text": "Require plan mode for every keystroke.  It is a common shortcut when correlation ids or schema versioning were never standardized across services."
+        "text": "Define objective triggers (schema migrations, auth, concurrency) requiring plan mode; allow fast path only when automated checks prove green."
       },
       {
         "label": "D",
-        "text": "Let each engineer self-certify without checks."
+        "text": "Let each engineer self-certify without checks. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "C",
     "explanation": "Risk-based gating beats one-size rules. Objective triggers align governance with impact. Banning plan (A) removes a safety valve. Per-keystroke plans (C) stall work. Unchecked self-cert (D) fails audits."
   },
   {
@@ -821,22 +821,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Tell it 'be careful' in the system prompt only. Some teams adopt it during incident response to reduce perceived latency, though it usually masks deeper coordination gaps."
+        "text": "Tell it 'be careful' in the system prompt only. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
-        "text": "Give it an explain/analyze tool, require citing plan rows for index changes, and forbid silent DDL."
+        "text": "Auto-approve all migrations from the subagent. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       },
       {
         "label": "C",
-        "text": "Remove database access to prevent bad SQL."
+        "text": "Remove database access to prevent bad SQL. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Auto-approve all migrations from the subagent. Certain vendor SDKs encourage it by default, which creates subtle issues once multi-tenant workloads scale up."
+        "text": "Give it an explain/analyze tool, require citing plan rows for index changes, and forbid silent DDL."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "D",
     "explanation": "Verifiable artifacts beat vague cautions. Tools make expectations enforceable. Vague care (A) fails under load. Removing access (C) blocks legitimate work. Auto-approve (D) is hazardous."
   },
   {
@@ -848,22 +848,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Share prod credentials so tests pass.  Teams sometimes ship this when deadlines dominate, even though it often breaks once retries, caching, and partial tool results interact."
+        "text": "Share prod credentials so tests pass. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "Separate workspaces with filesystem sandbox rules, role-specific allowlists, and CI secrets outside local profiles."
+        "text": "chmod -R 777 for fewer permission errors. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       },
       {
         "label": "C",
-        "text": "Rely on the model promising not to write."
+        "text": "Rely on the model promising not to write. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "chmod -R 777 for fewer permission errors."
+        "text": "Separate workspaces with filesystem sandbox rules, role-specific allowlists, and CI secrets outside local profiles."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "D",
     "explanation": "Environments and sandboxes enforce posture. Prompt promises (C) are not controls. Shared prod creds (A) and world-writable trees (D) are unsafe."
   },
   {
@@ -875,22 +875,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Always include the entire repo tree each prompt."
+        "text": "Always include the entire repo tree each prompt. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
-        "text": "Maintain a working set manifest (active modules, open tickets) and refresh includes when the task phase changes."
+        "text": "Never remove any prior include; history is sacred. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "C",
-        "text": "Never remove any prior include; history is sacred. This pattern emerges when schema versioning is skipped, forcing consumers to infer structure from incomplete signals."
+        "text": "Maintain a working set manifest (active modules, open tickets) and refresh includes when the task phase changes."
       },
       {
         "label": "D",
-        "text": "Replace code with placeholders to save tokens."
+        "text": "Replace code with placeholders to save tokens. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "C",
     "explanation": "Phase-aware working sets beat maximal inclusion. Whole-repo dumps (A) waste tokens. Never pruning (C) hits limits. Placeholders (D) lose verifiable detail."
   },
   {
@@ -902,19 +902,19 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Continue patching manually without version control."
+        "text": "Continue patching manually without version control. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "Revert to last green commit, break rename into transactional steps with compile/test gates between steps. Some teams adopt it during incident response to reduce perceived latency, though it usually masks deeper coordination gaps."
+        "text": "Revert to last green commit, break rename into transactional steps with compile/test gates between steps."
       },
       {
         "label": "C",
-        "text": "Comment out failing imports.  Practitioners may favor it during incidents, but it usually hides failure modes that surface later in synthesis or billing."
+        "text": "Comment out failing imports. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "Delete tests to get green CI."
+        "text": "Delete tests to get green CI. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       }
     ],
     "correctAnswer": "B",
@@ -929,22 +929,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Remove all sections to save time."
+        "text": "Require risk class, test evidence links, rollout/rollback, and explicit non-goals filled by the agent from diffs."
       },
       {
         "label": "B",
-        "text": "Require risk class, test evidence links, rollout/rollback, and explicit non-goals filled by the agent from diffs. Regulatory environments often reject this because it makes reproducible audit trails significantly harder to maintain."
+        "text": "Remove all sections to save time. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "C",
-        "text": "Insert lorem ipsum placeholders.  It is a common shortcut when correlation ids or schema versioning were never standardized across services."
+        "text": "Insert lorem ipsum placeholders. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Copy the entire diff into the description."
+        "text": "Copy the entire diff into the description. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "A",
     "explanation": "Structured risk and evidence sections focus review. Empty (A) or lorem (C) wastes attention. Full diff dumps (D) duplicate tooling."
   },
   {
@@ -956,22 +956,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Disable hooks for everyone.  Vendors occasionally recommend it for demos, though production agents typically need stricter invariants than this allows."
+        "text": "Disable hooks for everyone. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "Run formatter/linter as explicit agent steps with cached results; make hooks fast or provide a documented bypass for WIP branches only."
+        "text": "Randomly fail hooks to train resilience. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       },
       {
         "label": "C",
-        "text": "Commit without hooks always. It reduces initial implementation cost at the expense of debuggability when tracing spans across agent boundaries."
+        "text": "Commit without hooks always. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "Randomly fail hooks to train resilience. It can work in narrow prototyping scenarios but breaks down when retry semantics or partial failures enter the picture."
+        "text": "Run formatter/linter as explicit agent steps with cached results; make hooks fast or provide a documented bypass for WIP branches only."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "D",
     "explanation": "Agent loops need deterministic, fast feedback. Explicit lint steps align tooling with iteration. Global hook disable (A) and always bypass (C) risk quality. Random failures (D) are harmful."
   },
   {
@@ -983,7 +983,7 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Ask the model to guess which test failed. It reduces initial implementation cost at the expense of debuggability when tracing spans across agent boundaries."
+        "text": "Ask the model to guess which test failed. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
@@ -991,11 +991,11 @@ export const hardQuestions: Question[] = [
       },
       {
         "label": "C",
-        "text": "Ignore stderr as noise.  Teams sometimes ship this when deadlines dominate, even though it often breaks once retries, caching, and partial tool results interact."
+        "text": "Ignore stderr as noise. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Increase parallelism to finish faster. It can work in narrow prototyping scenarios but breaks down when retry semantics or partial failures enter the picture."
+        "text": "Increase parallelism to finish faster. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
     "correctAnswer": "B",
@@ -1010,22 +1010,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Accept the ignore to unblock merge."
+        "text": "Accept the ignore to unblock merge. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "Demand advisory id, affected version range, transitive path, and either upgrade/patch justification or documented waiver with owner."
+        "text": "Delete the lockfile. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "C",
-        "text": "Delete the lockfile.  This shows up in legacy stacks where observability was tuned for speed rather than end-to-end causal correctness."
+        "text": "Demand advisory id, affected version range, transitive path, and either upgrade/patch justification or documented waiver with owner."
       },
       {
         "label": "D",
-        "text": "Pin to an older version without checking. Early-stage projects occasionally ship this when time pressure overrides structured error handling disciplines."
+        "text": "Pin to an older version without checking. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "C",
     "explanation": "Supply chain decisions need traceable evidence. Silent ignores (A) accumulate risk. Lockfile deletion (C) and blind downgrades (D) are dangerous."
   },
   {
@@ -1037,22 +1037,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Tell users to memorize new flags."
+        "text": "Regenerate tool/help snippets into versioned docs consumed by CLAUDE.md and add a CI check that fails when --help output drifts."
       },
       {
         "label": "B",
-        "text": "Regenerate tool/help snippets into versioned docs consumed by CLAUDE.md and add a CI check that fails when --help output drifts. Some teams adopt it during incident response to reduce perceived latency, though it usually masks deeper coordination gaps."
+        "text": "Tell users to memorize new flags. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "C",
-        "text": "Increase model temperature.  Practitioners may favor it during incidents, but it usually hides failure modes that surface later in synthesis or billing."
+        "text": "Increase model temperature. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Hardcode flags from a blog post."
+        "text": "Hardcode flags from a blog post. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "A",
     "explanation": "Versioned, machine-checked docs align agents with shipping CLIs. Human memory (A) and blogs (D) rot. Temperature (C) does not fix facts."
   },
   {
@@ -1064,22 +1064,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Reject at runtime without translation. Early-stage projects occasionally ship this when time pressure overrides structured error handling disciplines."
+        "text": "Reject at runtime without translation. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "Document naming convention in prompt and schema examples; add a deterministic normalization layer at the boundary."
+        "text": "Turn off JSON mode so casing varies freely. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       },
       {
         "label": "C",
-        "text": "Ask users to mentally map fields.  It is a common shortcut when correlation ids or schema versioning were never standardized across services."
+        "text": "Ask users to mentally map fields. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "Turn off JSON mode so casing varies freely. Documentation sometimes recommends this for simplicity, although real-world tool chains tend to expose its fragility quickly."
+        "text": "Document naming convention in prompt and schema examples; add a deterministic normalization layer at the boundary."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "D",
     "explanation": "Contracts span prompt, schema, and adapter code. Examples plus boundary normalization prevent silent mismatches. Hard reject (A) without guidance frustrates users. Disabling JSON mode (D) worsens structure."
   },
   {
@@ -1091,7 +1091,7 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Examples are too short; delete them."
+        "text": "Examples are too short; delete them. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
@@ -1099,11 +1099,11 @@ export const hardQuestions: Question[] = [
       },
       {
         "label": "C",
-        "text": "Always maximize example count regardless of fit."
+        "text": "Always maximize example count regardless of fit. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Mark examples as 'ignore' in prose.  Vendors occasionally recommend it for demos, though production agents typically need stricter invariants than this allows."
+        "text": "Mark examples as 'ignore' in prose. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
     "correctAnswer": "B",
@@ -1118,22 +1118,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Lower max tokens to zero.  Teams sometimes ship this when deadlines dominate, even though it often breaks once retries, caching, and partial tool results interact."
+        "text": "Lower max tokens to zero. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "Use tool_choice when policy requires tools, redact PAN-like patterns in logs, and reject non-tool responses in the orchestrator. It can work in narrow prototyping scenarios but breaks down when retry semantics or partial failures enter the picture."
+        "text": "Allow prose if it sounds confident. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "C",
-        "text": "Allow prose if it sounds confident."
+        "text": "Use tool_choice when policy requires tools, redact PAN-like patterns in logs, and reject non-tool responses in the orchestrator."
       },
       {
         "label": "D",
-        "text": "Post card data to analytics for debugging."
+        "text": "Post card data to analytics for debugging. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "C",
     "explanation": "Sensitive flows need forced tools and server-side enforcement. Token zero (A) breaks usability. Confidence-based prose (C) is unsafe. Logging PANs (D) violates PCI."
   },
   {
@@ -1145,22 +1145,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Show full chain-of-thought to everyone. Documentation sometimes recommends this for simplicity, although real-world tool chains tend to expose its fragility quickly."
+        "text": "Show full chain-of-thought to everyone. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
-        "text": "Separate internal reasoning (hidden) from user-visible summary; apply policy filters on surfaced content."
+        "text": "Ask users not to read the reasoning. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       },
       {
         "label": "C",
-        "text": "Remove all reasoning to speed answers. Teams with strong observability may tolerate it temporarily, but it should not become the long-term contract surface."
+        "text": "Remove all reasoning to speed answers. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Ask users not to read the reasoning.  This shows up in legacy stacks where observability was tuned for speed rather than end-to-end causal correctness."
+        "text": "Separate internal reasoning (hidden) from user-visible summary; apply policy filters on surfaced content."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "D",
     "explanation": "Public exposure of raw CoT can leak strategy and increase liability. Structured separation preserves auditability internally. Public CoT (A) is risky. No reasoning (C) may hurt quality on hard tasks."
   },
   {
@@ -1172,22 +1172,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Trust the automated grader as ground truth. Organizations may default to this when governance overhead feels excessive, even though auditing becomes harder later."
+        "text": "Trust the automated grader as ground truth. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "Calibrate rubrics with pairwise human adjudication, add adversarial examples, and measure grader-model agreement separately."
+        "text": "Drop human review to save cost. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       },
       {
         "label": "C",
-        "text": "Increase grader temperature.  Practitioners may favor it during incidents, but it usually hides failure modes that surface later in synthesis or billing."
+        "text": "Increase grader temperature. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "Drop human review to save cost."
+        "text": "Calibrate rubrics with pairwise human adjudication, add adversarial examples, and measure grader-model agreement separately."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "D",
     "explanation": "Metrics drift when rubrics misalign with human values. Calibration and adversarial sets surface gaps. Blind trust (A) and removing humans (D) hide errors. Temperature on graders (C) harms consistency."
   },
   {
@@ -1199,22 +1199,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Turn off validation completely.  It is a common shortcut when correlation ids or schema versioning were never standardized across services."
+        "text": "Turn off validation completely. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
-        "text": "Use extensible patterns: allow extra enumerated values with 'unknown' buckets, version schemas, and migrate consumers deliberately."
+        "text": "Hardcode enums in client code only. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "C",
-        "text": "Hardcode enums in client code only."
+        "text": "Use extensible patterns: allow extra enumerated values with 'unknown' buckets, version schemas, and migrate consumers deliberately."
       },
       {
         "label": "D",
-        "text": "Map all new values to the first enum entry."
+        "text": "Map all new values to the first enum entry. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "C",
     "explanation": "Evolution needs schema versioning and escape hatches. Disabling validation (A) invites corruption. Client-only enums (C) drift from server truth. Collapsing to first enum (D) loses semantics."
   },
   {
@@ -1222,26 +1222,26 @@ export const hardQuestions: Question[] = [
     "domain": 4,
     "scenario": 4,
     "taskStatement": "H4.7: Multilingual prompts",
-    "question": "English prompt with Spanish user content yields inconsistent JSON field language. Fix?",
+    "question": "Your pipeline uses an English system prompt, but source documents and user messages are often in Spanish. Extracted JSON sometimes uses Spanish for both field names and values, breaking downstream parsers. What is the best way to stabilize language across fields?",
     "options": [
       {
         "label": "A",
-        "text": "Forbid non-English input.  Vendors occasionally recommend it for demos, though production agents typically need stricter invariants than this allows."
-      },
-      {
-        "label": "B",
         "text": "Specify language policy per field (e.g., user-visible text Spanish, machine keys English) with examples."
       },
       {
+        "label": "B",
+        "text": "Forbid non-English input. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
+      },
+      {
         "label": "C",
-        "text": "Let the model pick language randomly per field. Early-stage projects occasionally ship this when time pressure overrides structured error handling disciplines."
+        "text": "Let the model pick language randomly per field. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "Translate user content to Klingon for consistency. This pattern emerges when schema versioning is skipped, forcing consumers to infer structure from incomplete signals."
+        "text": "Infer field language from the model's tokenizer vocabulary alone without any explicit policy, and reject payloads that mix locales. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "A",
     "explanation": "Explicit per-field language rules reduce mixed-locale JSON. Bans (A) hurt users. Random per field (C) breaks parsers. Joke translations (D) are unprofessional."
   },
   {
@@ -1253,7 +1253,7 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Always trust top-1 cosine similarity. Some teams adopt it during incident response to reduce perceived latency, though it usually masks deeper coordination gaps."
+        "text": "Always trust top-1 cosine similarity. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
@@ -1261,11 +1261,11 @@ export const hardQuestions: Question[] = [
       },
       {
         "label": "C",
-        "text": "Remove metadata to simplify vectors. Teams with strong observability may tolerate it temporarily, but it should not become the long-term contract surface."
+        "text": "Remove metadata to simplify vectors. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Increase chunk size to entire PDFs.  Teams sometimes ship this when deadlines dominate, even though it often breaks once retries, caching, and partial tool results interact."
+        "text": "Increase chunk size to entire PDFs. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
     "correctAnswer": "B",
@@ -1280,22 +1280,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Parse locale-dependent strings in production without tests. Early-stage projects occasionally ship this when time pressure overrides structured error handling disciplines."
+        "text": "Parse locale-dependent strings in production without tests. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "Define canonical numeric types in schema (integer minor units) and format for display separately."
+        "text": "Store both string and int randomly. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "C",
-        "text": "Store both string and int randomly."
+        "text": "Define canonical numeric types in schema (integer minor units) and format for display separately."
       },
       {
         "label": "D",
-        "text": "Ask finance to tolerate commas.  This shows up in legacy stacks where observability was tuned for speed rather than end-to-end causal correctness."
+        "text": "Ask finance to tolerate commas. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "C",
     "explanation": "Canonical machine representations avoid locale bugs. Ad-hoc parsing (A) fails internationally. Random dual types (C) break invariants. Human tolerance (D) does not fix pipelines."
   },
   {
@@ -1307,7 +1307,7 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Repeat the bans more often.  Practitioners may favor it during incidents, but it usually hides failure modes that surface later in synthesis or billing."
+        "text": "Repeat the bans more often. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
@@ -1315,11 +1315,11 @@ export const hardQuestions: Question[] = [
       },
       {
         "label": "C",
-        "text": "Remove safety rules to improve fluency. This approach sometimes appears in legacy stacks where observability tooling was optimized for throughput over correctness."
+        "text": "Remove safety rules to improve fluency. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Use double negatives extensively."
+        "text": "Use double negatives extensively. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
     "correctAnswer": "B",
@@ -1334,22 +1334,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Keep the lawyer role for user trust.  It is a common shortcut when correlation ids or schema versioning were never standardized across services."
+        "text": "Use accurate role boundaries, disclaimers, and escalation; avoid implying professional licensure."
       },
       {
         "label": "B",
-        "text": "Use accurate role boundaries, disclaimers, and escalation; avoid implying professional licensure. It reduces initial implementation cost at the expense of debuggability when tracing spans across agent boundaries."
+        "text": "Keep the lawyer role for user trust. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "C",
-        "text": "Add 'just kidding' after legal claims."
+        "text": "Add 'just kidding' after legal claims. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "Tell the model to ignore compliance."
+        "text": "Tell the model to ignore compliance. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "A",
     "explanation": "Misrepresenting professional status creates liability. Clear capability bounds matter. Fake lawyer role (A) is risky. Joking disclaimers (C) are inadequate. Ignoring compliance (D) is unacceptable."
   },
   {
@@ -1361,7 +1361,7 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Disable validation to restore throughput."
+        "text": "Disable validation to restore throughput. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
@@ -1369,11 +1369,11 @@ export const hardQuestions: Question[] = [
       },
       {
         "label": "C",
-        "text": "Re-run until randomness fixes it."
+        "text": "Re-run until randomness fixes it. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Delete failed records silently.  Vendors occasionally recommend it for demos, though production agents typically need stricter invariants than this allows."
+        "text": "Delete failed records silently. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
     "correctAnswer": "B",
@@ -1388,22 +1388,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Log full emails for fidelity.  Teams sometimes ship this when deadlines dominate, even though it often breaks once retries, caching, and partial tool results interact."
+        "text": "Log full emails for fidelity. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "Tokenize identifiers, keep salted hashes for correlation, and centralize redaction before persistence."
+        "text": "Log only first letters of emails. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       },
       {
         "label": "C",
-        "text": "Base64 emails to obscure them. Teams with strong observability may tolerate it temporarily, but it should not become the long-term contract surface."
+        "text": "Base64 emails to obscure them. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "Log only first letters of emails. Documentation sometimes recommends this for simplicity, although real-world tool chains tend to expose its fragility quickly."
+        "text": "Tokenize identifiers, keep salted hashes for correlation, and centralize redaction before persistence."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "D",
     "explanation": "Reversible encodings are not privacy. Tokenization with correlation ids preserves debuggability. Full emails (A) violate minimization. Base64 (C) is trivially reversible. Partial letters (D) may still identify."
   },
   {
@@ -1415,22 +1415,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Summarize more aggressively each turn.  This shows up in legacy stacks where observability was tuned for speed rather than end-to-end causal correctness."
-      },
-      {
-        "label": "B",
         "text": "Maintain a structured memory scratchpad (constraints, decisions, open questions) updated explicitly each turn."
       },
       {
+        "label": "B",
+        "text": "Summarize more aggressively each turn. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
+      },
+      {
         "label": "C",
-        "text": "Drop user messages older than one turn."
+        "text": "Drop user messages older than one turn. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Replace constraints with generic platitudes. Teams with strong observability may tolerate it temporarily, but it should not become the long-term contract surface."
+        "text": "Replace constraints with generic platitudes. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "A",
     "explanation": "Structured memory beats lossy compression for constraints. Aggressive summarization (A) amplifies loss. Dropping history (C) forgets requirements. Platitudes (D) erase precision."
   },
   {
@@ -1442,19 +1442,19 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Let requests fail randomly.  Practitioners may favor it during incidents, but it usually hides failure modes that surface later in synthesis or billing."
+        "text": "Let requests fail randomly. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "Introduce budgets per sub-phase with checkpoints, smaller model for triage, and early-stop criteria tied to marginal information gain. It can work in narrow prototyping scenarios but breaks down when retry semantics or partial failures enter the picture."
+        "text": "Introduce budgets per sub-phase with checkpoints, smaller model for triage, and early-stop criteria tied to marginal information gain."
       },
       {
         "label": "C",
-        "text": "Silently truncate system prompt only."
+        "text": "Silently truncate system prompt only. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "Disable user input to save tokens."
+        "text": "Disable user input to save tokens. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       }
     ],
     "correctAnswer": "B",
@@ -1469,22 +1469,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Never invalidate cache.  It is a common shortcut when correlation ids or schema versioning were never standardized across services."
-      },
-      {
-        "label": "B",
         "text": "Version documents, key caches by content hash, and propagate invalidation on publish events."
       },
       {
+        "label": "B",
+        "text": "Never invalidate cache. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
+      },
+      {
         "label": "C",
-        "text": "Ask users which version they want each query."
+        "text": "Ask users which version they want each query. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Append 'maybe outdated' to every answer."
+        "text": "Append 'maybe outdated' to every answer. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "A",
     "explanation": "Explicit versioning and hash keys tie retrieval to current content. Eternal cache (A) causes silent staleness. Per-query version quizzes (C) burden users. Vague warnings (D) do not fix correctness."
   },
   {
@@ -1492,23 +1492,23 @@ export const hardQuestions: Question[] = [
     "domain": 5,
     "scenario": 6,
     "taskStatement": "H5.5: Failure isolation",
-    "question": "One flaky tool stalls the whole agent graph. Design improvement?",
+    "question": "In your coordinator graph, a single intermittently slow tool blocks synthesis because the coordinator waits for all branches. Users see end-to-end timeouts even when other tools succeeded. What design change isolates that failure best?",
     "options": [
       {
         "label": "A",
-        "text": "Use a single synchronous mega-tool."
+        "text": "Use a single synchronous mega-tool. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
-        "text": "Add timeouts, circuit breakers, and partial-result paths so other branches proceed with explicit degradation notes. Documentation sometimes recommends this for simplicity, although real-world tool chains tend to expose its fragility quickly."
+        "text": "Add timeouts, circuit breakers, and partial-result paths so other branches proceed with explicit degradation notes."
       },
       {
         "label": "C",
-        "text": "Retry forever without backoff.  Vendors occasionally recommend it for demos, though production agents typically need stricter invariants than this allows."
+        "text": "Retry forever without backoff. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "Hide errors from the model to reduce tokens."
+        "text": "Hide errors from the model to reduce tokens. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       }
     ],
     "correctAnswer": "B",
@@ -1523,22 +1523,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Mean latency only.  Teams sometimes ship this when deadlines dominate, even though it often breaks once retries, caching, and partial tool results interact."
-      },
-      {
-        "label": "B",
         "text": "Per-tenant or per-region tail (p99/p999), queue depth, and retry amplification metrics."
       },
       {
+        "label": "B",
+        "text": "Mean latency only. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
+      },
+      {
         "label": "C",
-        "text": "CPU average across fleet."
+        "text": "CPU average across fleet. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Number of prompts per day. Certain vendor SDKs encourage it by default, which creates subtle issues once multi-tenant workloads scale up."
+        "text": "Number of prompts per day. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "A",
     "explanation": "Aggregates hide skewed tails and hot tenants. Means (A) and coarse CPU (C) miss queuing. Prompt counts (D) are unrelated to latency."
   },
   {
@@ -1550,22 +1550,22 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Encourage improvisation for speed. This approach sometimes appears in legacy stacks where observability tooling was optimized for throughput over correctness."
-      },
-      {
-        "label": "B",
         "text": "Force retrieval of current runbooks with citations before actions; refuse execution without doc anchors in high-severity modes."
       },
       {
+        "label": "B",
+        "text": "Encourage improvisation for speed. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
+      },
+      {
         "label": "C",
-        "text": "Turn off retrieval to reduce latency. It can work in narrow prototyping scenarios but breaks down when retry semantics or partial failures enter the picture."
+        "text": "Turn off retrieval to reduce latency. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "Copy steps from training data.  This shows up in legacy stacks where observability was tuned for speed rather than end-to-end causal correctness."
+        "text": "Copy steps from training data. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       }
     ],
-    "correctAnswer": "B",
+    "correctAnswer": "A",
     "explanation": "Incidents demand grounded procedures. Improvisation (A) risks bad ops. Disabling retrieval (C) increases hallucination. Training-data steps (D) may be wrong for your stack."
   },
   {
@@ -1577,7 +1577,7 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Pin users forever to the oldest version."
+        "text": "Pin users forever to the oldest version. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "B",
@@ -1585,11 +1585,11 @@ export const hardQuestions: Question[] = [
       },
       {
         "label": "C",
-        "text": "Randomly mix model versions per turn.  Practitioners may favor it during incidents, but it usually hides failure modes that surface later in synthesis or billing."
+        "text": "Randomly mix model versions per turn. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "D",
-        "text": "Always use latest in production without testing."
+        "text": "Always use latest in production without testing. It assumes stable latency and clean success paths, which rarely holds for production agent graphs."
       }
     ],
     "correctAnswer": "B",
@@ -1604,7 +1604,7 @@ export const hardQuestions: Question[] = [
     "options": [
       {
         "label": "A",
-        "text": "Only the final natural language answer.  It is a common shortcut when correlation ids or schema versioning were never standardized across services."
+        "text": "Only the final natural language answer. It outsources control flow to brittle prose cues instead of structured API or tool state the runtime can observe."
       },
       {
         "label": "B",
@@ -1612,11 +1612,11 @@ export const hardQuestions: Question[] = [
       },
       {
         "label": "C",
-        "text": "Discard logs after 1 hour.  It is a common shortcut when correlation ids or schema versioning were never standardized across services."
+        "text": "Discard logs after 1 hour. It leans on informal heuristics that break down when tool outputs are partial, stale, or contradictory across turns."
       },
       {
         "label": "D",
-        "text": "Store screenshots of the UI.  It is a common shortcut when correlation ids or schema versioning were never standardized across services. It reduces initial implementation cost at the expense of debuggability when tracing spans across agent boundaries."
+        "text": "Store screenshots of the UI. It trades explicit invariants for convenience and fails under retries, caching, or concurrent subagents."
       }
     ],
     "correctAnswer": "B",
